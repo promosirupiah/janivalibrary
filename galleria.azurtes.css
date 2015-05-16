@@ -8,7 +8,7 @@
     font: 12px/1.4 arial,sans-serif;
     color: #000;
     border: solid 1px #999;
-    background:#5393b9 url(http://promosirupiah.bitbucket.org/janivalibrary/bg.png);
+    background:#5393b9 url(http://promosirupiah.github.io/janivalibrary/bg.png);
 }
 .galleria-container img {
     -moz-user-select: none;
@@ -22,7 +22,7 @@
     left: 0;
     right: 0;
     bottom: 40px;
-    background:#999 url(http://promosirupiah.bitbucket.org/janivalibrary/bg.png);
+    background:#999 url(http://promosirupiah.github.io/janivalibrary/bg.png);
 }
 .galleria-bar {
     height: 40px;
@@ -47,7 +47,7 @@
     outline-width: 0 1px 0 0;
 }
 .galleria-play {
-    background-image: url(http://promosirupiah.bitbucket.org/janivalibrary/playpause-white.png);
+    background-image: url(http://promosirupiah.github.io/janivalibrary/playpause-white.png);
     background-position: 50% 11px;
 }
 .galleria-play.pause {
@@ -55,7 +55,7 @@
 }
 .galleria-fullscreen {
     left: 42px;
-    background-image: url(http://promosirupiah.bitbucket.org/janivalibrary/fscreen.png);
+    background-image: url(http://promosirupiah.github.io/janivalibrary/fscreen.png);
     background-position: 50% 11px;
 }
 .galleria-container.fullscreen .galleria-fullscreen {
@@ -140,7 +140,7 @@ body .galleria-tooltip {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/bgie.png);
+    background: url(http://promosirupiah.github.io/janivalibrary/bgie.png);
     background: rgba(0,0,0,.7);
     padding: 3px 8px;
     font-size: 10px;
@@ -172,7 +172,7 @@ body .galleria-tooltip {
     width: 32px;
     height: 5px;
     background: rgba(255,255,255,.2);
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/20.png );
+    background: url(http://promosirupiah.github.io/janivalibrary/20.png );
     position: absolute;
     top: 10px;
     right: 10px;
@@ -193,8 +193,8 @@ body .galleria-tooltip {
     right: 0;
     bottom: 0;
     color: #fff;
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/bgie.png);
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/bg.png) rgba(0,0,0,.6);
+    background: url(http://promosirupiah.github.io/janivalibrary/bgie.png);
+    background: url(http://promosirupiah.github.io/janivalibrary/bg.png) rgba(0,0,0,.6);
     z-index:2;
 }
 
@@ -246,7 +246,7 @@ body .galleria-tooltip {
     margin: -24px 0 0 -24px;
     z-index: 2;
     display: none;
-    background: #000 url(http://promosirupiah.bitbucket.org/janivalibrary/loader.gif) no-repeat 50% 50%;
+    background: #000 url(http://promosirupiah.github.io/janivalibrary/loader.gif) no-repeat 50% 50%;
     opacity: .6;
     filter: alpha(opacity=60);
     -moz-border-radius: 6px;
@@ -271,13 +271,13 @@ body .galleria-tooltip {
     position: absolute;
     left: 20px;
     z-index: 2;
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/left.png) 50% 50% no-repeat;
+    background: url(http://promosirupiah.github.io/janivalibrary/left.png) 50% 50% no-repeat;
     opacity: 0;
 }
 .galleria-image-nav-right {
     left: auto;
     right: 20px;
-    background-image: url(http://promosirupiah.bitbucket.org/janivalibrary/right.png);
+    background-image: url(http://promosirupiah.github.io/janivalibrary/right.png);
     z-index: 2;
 }
 .galleria-container.notouch .galleria-image-nav-left:hover,
@@ -289,7 +289,7 @@ body .galleria-tooltip {
 .galleria-thumb-nav-right {
     cursor: pointer;
     display: none;
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/thumbleft-white.png) 50% 50%;
+    background: url(http://promosirupiah.github.io/janivalibrary/thumbleft-white.png) 50% 50%;
     position: absolute;
     left: 3px;
     top: 3px;
@@ -304,7 +304,7 @@ body .galleria-tooltip {
     right: 3px;
     *right: 1px;
     left: auto;
-    background: url(http://promosirupiah.bitbucket.org/janivalibrary/thumbright-white.png) 50% 50%;
+    background: url(http://promosirupiah.github.io/janivalibrary/thumbright-white.png) 50% 50%;
 }
 .galleria-thumbnails-container .disabled {
     opacity: .2;
