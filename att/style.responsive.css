@@ -113,15 +113,9 @@
 .responsive nav.art-nav,
 .responsive .art-nav-inner
 {
-   width: auto !important;
+   width: 100%;
    position: fixed !important;
-   top: auto !important;
-   left: auto !important;
-   right: auto !important;
-   bottom: auto !important;
-   margin-top: 0;
-   margin-bottom: 0;
-   min-width: 0;
+   top: 0;
    text-align: right !important;
 }
 
