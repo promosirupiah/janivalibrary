@@ -114,7 +114,7 @@
 .responsive .art-nav-inner
 {
    width: auto !important;
-   position: relative !important;
+   position: fixed !important;
    top: auto !important;
    left: auto !important;
    right: auto !important;
