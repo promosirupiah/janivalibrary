@@ -2,7 +2,7 @@
 $CONFIG = '{"lang":"en","error_reporting":false,"show_hidden":false,"hide_Cols":false,"theme":"light"}';
 define('VERSION', '1.1.2');
 define('APP_TITLE', 'Madx Manager');
-$use_auth = true;
+$use_auth = false;
 $auth_users = array(
     'admin' => '$2y$10$8rXcGd0YHsVWwjPXjOkUbeRwhN/WoHGoKmQgai5Y9dWe4/tA1tNgq', //admin@123
     'user' => '$2y$10$8rXcGd0YHsVWwjPXjOkUbeRwhN/WoHGoKmQgai5Y9dWe4/tA1tNgq' //12345
