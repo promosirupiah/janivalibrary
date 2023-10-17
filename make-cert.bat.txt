@@ -1,0 +1,174 @@
+@echo off
+set /p domain="Enter Domain: "
+set OPENSSL_CONF=../conf/openssl.cnf
+
+if not exist .\%domain% mkdir .\%domain%
+
+..\bin\openssl req -config cert.conf -new -sha256 -newkey rsa:2048 -nodes -keyout %domain%\server.key -x509 -days 3650 -out %domain%\server.crt
+
+echo.
+echo -----
+echo The certificate was provided.
+echo.
+pause
+
+================================
+
+
+[ req ]
+
+default_bits        = 2048
+default_keyfile     = server-key.pem
+distinguished_name  = subject
+req_extensions      = req_ext
+x509_extensions     = x509_ext
+string_mask         = utf8only
+
+[ subject ]
+
+countryName                 = Country Name (2 letter code)
+countryName_default         = US
+
+stateOrProvinceName         = State or Province Name (full name)
+stateOrProvinceName_default = NY
+
+localityName                = Locality Name (eg, city)
+localityName_default        = New York
+
+organizationName            = Organization Name (eg, company)
+organizationName_default    = Example, LLC
+
+commonName                  = Common Name (e.g. server FQDN or YOUR name)
+commonName_default          = {{DOMAIN}}
+
+emailAddress                = Email Address
+emailAddress_default        = test@example.com
+
+[ x509_ext ]
+
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+
+basicConstraints       = CA:FALSE
+keyUsage               = digitalSignature, keyEncipherment
+subjectAltName         = @alternate_names
+nsComment              = "OpenSSL Generated Certificate"
+
+[ req_ext ]
+
+subjectKeyIdentifier = hash
+
+basicConstraints     = CA:FALSE
+keyUsage             = digitalSignature, keyEncipherment
+subjectAltName       = @alternate_names
+nsComment            = "OpenSSL Generated Certificate"
+
+[ alternate_names ]
+
+DNS.1       = {{DOMAIN}}
+
+======================
+
+
+
+1. Navigate to Apache directory in XAMPP.
+
+In regular install it’s in C:\xampp\apache.
+
+enter image description here
+
+2. Create a folder in that page.
+
+This is where we will store our cert. In this example I will create “crt” folder. So we will have C:\xampp\apache\crt
+
+enter image description here
+
+3. Add this files.
+
+cert.conf
+
+make-cert.bat
+
+enter image description here
+
+4. Edit cert.conf and Run make-cert.bat
+
+Change {{DOMAIN}} text using the domain we want to use, in this case site.test and save.
+
+Double click the make-cert.bat and input the domain site.test when prompted. And just do enter in other question since we already set the default from cert.conf.
+
+enter image description here
+
+Note: I don’t know how to do text replace in .bat script, if you do, let me know in the comment how to do it and I will update make-cert.bat to automatically replace the {{DOMAIN}} with the domain input.
+
+enter image description here
+
+5. Install the cert in windows.
+
+After that, you will see site.test folder created. In that folder we will have server.crt and server.key. This is our SSL certificate.
+
+Double click on the server.crt to install it on Windows so Windows can trust it.
+
+enter image description here
+
+And then select Local Machine as Store Location.
+
+enter image description here
+
+And then Select “Place all certificate in the following store” and click browse and select Trusted Root Certification Authorities.
+
+enter image description here
+
+Click Next and Finish.
+
+And now this cert is installed and trusted in Windows. Next is how how to use this cert in XAMPP.
+
+enter image description here
+
+6. Add the site in Windows hosts
+
+Open notepad as administrator.
+Edit C:\Windows\System32\drivers\etc\hosts (the file have no ext)
+Add this in a new line:
+127.0.0.1 site.test
+This will tell windows to load XAMPP when we visit http://site.test You can try and it will show XAMPP dashboard page.
+
+enter image description here
+
+7. Add the site in XAMPP conf.
+
+We need to enable SSL for this domain and let XAMPP know where we store the SSL Cert. So we need to edit C:\xampp\apache\conf\extra\httpd-xampp.conf
+
+And add this code at the bottom:
+
+ ## site.test
+ <VirtualHost *:80>
+     DocumentRoot "C:/xampp/htdocs"
+     ServerName site.test
+     ServerAlias *.site.test
+ </VirtualHost>
+ <VirtualHost *:443>
+     DocumentRoot "C:/xampp/htdocs"
+     ServerName site.test
+     ServerAlias *.site.test
+     SSLEngine on
+     SSLCertificateFile "crt/site.test/server.crt"
+     SSLCertificateKeyFile "crt/site.test/server.key"
+ </VirtualHost>
+After that, you will need to restart Apache in XAMPP. It’s very simple, simply open XAMPP Control Panel and Stop and re-Start Apache Module.
+
+Tips: In XAMPP conf, as you can see you can change the domain root directory if needed. Eg. as sub-dir in htdocs.
+
+enter image description here
+
+8. Restart your browser and Done!
+
+This is required to load the certificate. And visit the domain on your browser, and you will see green lock!
+
+enter image description here
+
+enter image description here
+
+I hope this tutorial is useful!
+
+Source: https://shellcreeper.com/how-to-create-valid-ssl-in-localhost-for-xampp/
