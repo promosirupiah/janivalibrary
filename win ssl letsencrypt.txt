@@ -1,0 +1,1469 @@
+It took me a long time to figure this out even though it really is super simple. My problem was that I didn't understand the terminology - particularly the validation part. In order to create a certificate, the certificate authority must confirm that you are the rightful owner and administrator for the domain. There are different methods on how to validate your ownership, which I will not go into because the one I will go over is the simplest. My other problem is that the only tutorials I could find on the internet were for old versions of win-simple and they have changed everything to make it even simpler. So those old tutorials actually held me back instead of helping.
+
+Anyway, back to validation, the (preferred) way LetsEncrypt validates your domain is by writing a file to "webroot/.well-known/acme-challenge/". I suggest you do a test domain using https://sslforfree.com in order to get some experience with the pitfalls of this kind of validation. My failures on this had to do with .htaccess rewriting urls and stuff like that. LetsEncrypt could not find the file in some cases and could not validate. When I figured out that my virtual host settings or .htaccess settings were messing things up, I was able to fix them and move on. Its a good way to learn and troubleshoot validation and I highly recommend it for first timers. It helped me get over the hump, for sure.
+
+Prerequisites:
+
+1) You must have a working apache installation, preferably on the same machine as hmailserver. It can also be done with IIS, but I know apache.
+
+Steps:
+
+1) Download the latest release of win-acme (new name of win-simple): https://github.com/PKISharp/win-acme/releases
+
+2) Extract it somewhere easy to find. I put it in a folder I created called C:\lews (lews = lets encrypt win simple but you can put it anywhere you want)
+
+3) Your domains MUST be working on apache. If you're like me, you're using virtual hosts because you have multiple domains and multiple websites (and multiple email domains). Here's the big trick to make it easier for multiple domains.
+
+Problem: win-acme will only write validation files to a single location in your web root.
+Solution: use aliases so all validation files will be written to a single location, but are accessible from multiple domains.
+
+Here's a virtual host for a domain name I just set up in order to follow and correctly document the steps for this tutorial. (I have already confirmed that this particular ddns provider does work with LetsEncrypt). I suggest testing on a test domain first, which can be a subdomain for a domain you already own.
+CODE: SELECT ALL
+
+<VirtualHost *:80>
+    DocumentRoot "C:/xampp/htdocs/letsencrypttest.ddnsfree.com"
+    ServerName letencrypttest.ddnsfree.com
+	Alias /.well-known "C:/xampp/htdocs/.well-known"
+</VirtualHost>
+[note: yes, I'm aware there is a spelling error, however, that's the way I set it up before realizing its misspelled, so those are indeed the accurate settings for my test domain]
+
+Set up all of your virtual hosts with this alias. Don't forget to restart apache after making changes to httpd.conf or your virtual hosts file (in xampp: "C:\xampp\apache\conf\extra\httpd-vhosts.conf").
+
+4) I'm using xampp and the default webroot is located at "C:\xampp\htdocs". Create the folder "C:\xampp\htdocs\.well-known" and then the folder "C:\xampp\htdocs\.well-known\acme-challenge".
+
+Make sure this folder is readable by EVERY DOMAIN in your virtual hosts file. To do this, create a text file in "C:\xampp\htdocs\.well-known\acme-challenge" and use your browser to find it from every single domain you want to get a certificte for:
+
+http: //domain1.tld/.well-known/acme-challenge/yourtextfile.txt
+http: //domain2.tld/.well-known/acme-challenge/yourtextfile.txt
+etc. etc.
+
+[edit: I added a space to http in order to prevent the forum from truncating the url]
+
+If your browser cannot find this file EVERY SINGLE TIME, then something is broken with your aliasing and you need to fix that before moving forward.
+
+As I said earlier, many things can break the aliasing, but its usually due to misconfigured virtual host or a rewrite rule in your virtual host or a .htaccess file. In one case, I had a script that made directory browsing "pretty" that broke the aliasing. Instead of pointing to "C:\xampp\htdocs\.well-known\acme-challenge", it was pointing to the domain's webroot like this: "C:\xampp\htdocs\domain1.tld\.well-known\acme-challenge". That's a problem. That's broken aliasing. You will not get your domain validated if aliasing is broken. So make sure to TEST every domain against the url "http: //domain1.tld/.well-known/acme-challenge/yourtextfile.txt". When that works for all of your domains, you can move on to the next step.
+
+In my case, my test domain alias and text file url is: http://letencrypttest.ddnsfree.com/.wel ... e/alias.yo and this does work.
+
+5) Run win-acme. Open a command prompt window and cd to the folder containing win-acme.
+CODE: SELECT ALL
+
+C:\Users\user>
+C:\Users\user>cd C:\lews
+C:\lews>
+Execute!
+CODE: SELECT ALL
+
+C:\lews>letsencrypt
+This will open another command prompt window that runs letsencrypt.exe:
+CODE: SELECT ALL
+
+ [INFO] A Simple ACME Client for Windows (WACS)
+ [INFO] Software version 1910.1.6661.39349 (RELEASE)
+ [INFO] IIS not detected
+ [INFO] ACME server https://acme-v01.api.letsencrypt.org/
+ [INFO] Please report issues at https://github.com/PKISharp/win-acme
+
+ M: Create new certificate with advanced options
+ L: List scheduled renewals
+ R: Renew scheduled
+ S: Renew specific
+ A: Renew *all*
+ V: Revoke certificate
+ C: Cancel scheduled renewal
+ X: Cancel *all* scheduled renewals
+ Q: Quit
+
+ Please choose from the menu:
+Choose M to create a new certificate.
+CODE: SELECT ALL
+
+ [INFO] Running in Advanced mode
+
+ 1: Manually input host names
+ C: Cancel
+
+ Which kind of certificate would you like to create?:
+Choose 1 to input host names.
+CODE: SELECT ALL
+
+Enter comma-separated list of host names, starting with the primary one:
+Here is where you enter the domain names, which must be comma-separated as it says (no spaces after commas!). A small note that is not incredibly important but could be useful for you. The first domain entered will be the one that the certificate is known as. So if you enter 10 different domain names, create and use the certificate, you will forever see the first domain entered. You will be creating a SAN certificate, which will work for all of the domains you enter, but the certificate will be known as the first domain you enter. In my case, I entered the domain that I use to announce hmailserver (hmail > settings > protocols > smtp > delivery of email > local host name). Its not really important. Those things don't need to match. I do it "just because" and for no other reason.
+
+In my case here, because I'm only running it on one test domain in order to produce this tutorial, I will enter: letencrypttest.ddnsfree.com
+CODE: SELECT ALL
+
+ [INFO] Plugin Manual generated target [Manual] [1 binding - letencrypttest.ddnsfree.com]
+
+ 1: [dns-01] Azure DNS
+ 2: [dns-01] Run external program/script to create and update records
+ 3: [http-01] Save file on local (network) path
+ 4: [http-01] Self-host verification files (recommended)
+ 5: [http-01] Upload verification file to FTP(S) server
+ 6: [http-01] Upload verification file to WebDav path
+ C: Cancel
+
+ How would you like to validate this certificate?:
+Choose 3 to save file on local path.
+CODE: SELECT ALL
+
+ Enter a site path (the web root of the host for http authentication):
+Enter the path we created in step 4. In my case: C:\xampp\htdocs
+
+Note that you enter the actual root and not the path to "/.well-known/acme-challenge". Win-acme is assuming you haven't got this far and will attempt to create these folders if they don't exist. In our case, we already created them in order to test the aliasing. From here win-acme will contact letsencrypt for the validation files, place the validation files in "C:\xampp\htdocs\.well-known\acme-challenge", make sure letsencrypt actually validates by contacting your server via http and finding these files, and finally, after validation, win-acme will delete the files.
+CODE: SELECT ALL
+
+ Copy default web.config before validation? (y/n):
+I don't know what this is. I answered yes and it creates the file web.config in C:\xampp\htdocs\.well-known\acme-challenge then deletes it. I don't know what it does.
+CODE: SELECT ALL
+
+1: Do not run any installation steps
+ 2: Run a custom script
+ C: Cancel
+
+ Which installer should run for the certificate?:
+Choose 1 to not run any installation scripts. Now is where all our hard work comes together.
+CODE: SELECT ALL
+
+ [INFO] Authorize identifier: letencrypttest.ddnsfree.com
+ [INFO] Authorizing letencrypttest.ddnsfree.com using http-01 validation (FileSystem)
+ [INFO] Answer should now be browsable at http://letencrypttest.ddnsfree.com/.well-known/acme-challenge/EUbFMJJx75G8lH-bzTFwlNYZlUeivdjGizCdm34FGdc
+ [INFO] Authorization result: valid
+ [INFO] Requesting certificate letencrypttest.ddnsfree.com 2018/4/1 11:12:22 AM
+ [INFO] Saving certificate to C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org
+ [INFO] Installing certificate in the certificate store
+ [INFO] Adding certificate letencrypttest.ddnsfree.com 2018/4/1 11:12:22 AM to store My
+
+ Do you want to replace the existing task? (y/n):
+I'm not sure what the last option will say if you have not run win-acme before. The "existing task" is a task that win-acme creates in windows task scheduler. The task is set up to run daily and will check a) if its time to renew (55 days after creation) and b) if its time to renew, it will run the renew certificate script automatically.
+
+So here I'm choosing NO because I don't want to disturb my existing task. If you're running it for the first time, I assume it asks to create a task. Say yes. OR if you've run it a few times trying to get things right, on the last time (meaning you finally set everything up the way you want), choose yes to replace the existing task.
+CODE: SELECT ALL
+
+ [INFO] Adding renewal for letencrypttest.ddnsfree.com
+ [INFO] Next renewal scheduled at 2018/5/26 15:18:43 PM
+
+ M: Create new certificate with advanced options
+ L: List scheduled renewals
+ R: Renew scheduled
+ S: Renew specific
+ A: Renew *all*
+ V: Revoke certificate
+ C: Cancel scheduled renewal
+ X: Cancel *all* scheduled renewals
+ Q: Quit
+
+ Please choose from the menu:
+And that is it. We are back to the beginning. Certificates are created and the world is a better place for it.
+
+6) Integrate your new certificate into hmailserver. Open hmail admin interface and go to settings > advanced > ssl certificates > add. Use any name for "name". Your certificate is located in the location win-acme reported above.
+CODE: SELECT ALL
+
+ [INFO] Saving certificate to C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org
+When you navigate there using file explorer, you will see many files. The ones you want for hmailserver are the CHAIN file and the KEY file. In my case, they are:
+
+C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org\letencrypttest.ddnsfree.com-chain.pem
+C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org\letencrypttest.ddnsfree.com-key.pem
+
+Put the location for these files and hit save.
+
+Next, go to settings > advanced > tcpip ports. For every port that uses a certificate (all of them in my case), choose the type of security and then choose the certificate from the drop down box. Hmail will notify you that you need to restart hmailserver in order to get the new certificates working. Say OK or choose no until you have changed/added your new certificate to all of the ports.
+
+That's it. Now when anyone connects, you should not get any certificate errors and no client should have to "accept all certificates".
+
+7) Renewals. Very important. The renewal task is already set up. However once the certificate is renewed, it will be a completely different certificate (with the same name). So you must restart hmailserver in order to load the new certificate. In another thread, Matt posted a useful script that you add to your scheduled task.
+
+Open a text editor and dump the following script into it:
+CODE: SELECT ALL
+
+Option Explicit
+
+Private const g_sAdminPassword = "TopSecretPassword"
+
+Dim oApp
+Set oApp = CreateObject("hMailServer.Application")
+' Give this script permission to access all
+' hMailServer settings.
+Call oApp.Authenticate("Administrator", g_sAdminPassword)
+
+Call oApp.Stop
+Wait(5)
+Call oApp.Start
+
+Function Wait(sec)
+	Dim t
+	t = Timer
+	Do While ((Timer - t) < sec) Xor (Timer < t)
+	Loop
+End Function
+Then save it as restart_server.vbs in a location you can find easily. Then, open windows task scheduler, find the win-acme task, hit properties so that you can change the settings, go to Actions, click NEW, browse to restart_server.vbs, hit OK, then make sure the letsencrypt part is ON TOP (restart_server.vbs should come after certificate renewal, obviously), Then save it and close task scheduler. You're now good for autmatic renewals and hmailserver will be immediately restarted to load the new certificate after renewal. The script runs daily and you're going to renew only every 55 days, so every day at the selected time, hmailserver will be restarted.
+
+That's it for now. I hope this was useful. I've received lots of very friendly help here so its nice to be able to contribute something back.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-01 18:19
+
+Bonus tutorial: Set up apache virtual hosts for the certificate you just created:
+CODE: SELECT ALL
+
+<VirtualHost *:80>
+	DocumentRoot "X:/xampp/htdocs/letsencrypttest.ddnsfree.com"
+	ServerName letencrypttest.ddnsfree.com
+	Alias /.well-known "X:/xampp/htdocs/.well-known"
+	RewriteEngine On
+	RewriteCond %{HTTPS} off
+	RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+</VirtualHost>
+
+<VirtualHost *:443>
+	DocumentRoot "X:/xampp/htdocs/letsencrypttest.ddnsfree.com"
+	SSLEngine on
+	SSLCertificateFile "C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org\letencrypttest.ddnsfree.com-crt.pem"
+	SSLCertificateKeyFile "C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org\letencrypttest.ddnsfree.com-key.pem"
+	SSLCertificateChainFile "C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org\letencrypttest.ddnsfree.com-chain.pem"
+	ServerName letencrypttest.ddnsfree.com
+	Alias /.well-known "X:/xampp/htdocs/.well-known"
+</VirtualHost>
+[edit - I misspelled my misspelling ;-) ]
+
+Setting up your virtual hosts this way will ensure that a) the certificate works and b) the rewrite will automatically force https. :-)
+
+Come to think of it, I'm not sure whether apache needs to be restarted in order to load renewed certificates. Maybe someone can chime in.
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-04-02 02:29
+
+palinka wrote: ?2018-04-01 18:19
+Come to think of it, I'm not sure whether apache needs to be restarted in order to load renewed certificates. Maybe someone can chime in.
+Yes it does need to be restarted....
+
+ALSO, I used this to generate a list of suitable ciphers >> https://mozilla.github.io/server-side-t ... generator/
+
+Well done Palinka, and thanks for posting.
+
+
+Oh and STANDARD ports for encryption
+
+Port 25 - StartTLS Optional - SMTP
+Port 110 - StartTLS Required - POP3
+Port 143 - StartTLS Required - IMAP
+Port 465 - SSL/TLS - SMTP
+Port 587 - StartTLS Required - SMTP (sometimes called submission port)
+Port 993 - SSL/TLS - IMAP
+Port 995 - SSL/TLS - POP3
+
+These coupled with the Settings >> SMTP >> Advanced >> 'Use StartTLS if available' checkbox would ensure that as many connections as possible will be secured
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-02 13:34
+
+I wonder if there is a way to flag actual certificate generation (versus the task scheduler's daily checking for renewal time) in order to not have to restart hmailserver daily. I don't think it's an issue for hmailserver, but I would like to add another action to shut down and restart Apache. I prefer not to do that daily because it could lead to trouble if unattended.
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-04-02 15:56
+
+There is this awesome thing on Facebook (yeah, I know right) >> https://developers.facebook.com/tools/c ... scriptions
+That lets you monitor any domain for a change in certificate.
+
+Every time LetsEncrypt updates my certificates automatically (cron job on Ubuntu), I get an automated email from Facebook.
+
+I'm sure there are others that offer this service, but Facebook do it for free for each of the domains and subdomains that I host
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-02 23:05
+
+I don't belong to faceborg. But at least I have a starting point to look. Thanks.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-03 00:12
+
+I found a script that restarts a windows service. I modified it for apache and it appears to work fine.
+
+restart_apache.bat
+CODE: SELECT ALL
+
+:stop
+sc stop Apache2.4
+
+rem cause a ~10 second sleep before checking the service state
+ping 127.0.0.1 -n 10 -w 1000 > nul
+
+sc query Apache2.4 | find /I "STATE" | find "STOPPED"
+if errorlevel 1 goto :stop
+goto :start
+
+:start
+net start | find /i "Apache2.4">nul && goto :start
+sc start Apache2.4
+I tested by attempting to open a webpage, which timed out while apache service was stopping. Apache error.log below:
+CODE: SELECT ALL
+
+[Mon Apr 02 17:56:45.875671 2018] [mpm_winnt:notice] [pid 10276:tid 680] AH00422: Parent: Received shutdown signal -- Shutting down the server.
+[Mon Apr 02 17:57:15.875737 2018] [mpm_winnt:notice] [pid 10276:tid 680] AH00431: Parent: Forcing termination of child process 10036
+[Mon Apr 02 17:57:23.500744 2018] [ssl:warn] [pid 10100:tid 680] AH01909: localhost:443:0 server certificate does NOT include an ID which matches the server name
+[Mon Apr 02 17:57:23.766369 2018] [ssl:warn] [pid 10100:tid 680] AH01909: localhost:443:0 server certificate does NOT include an ID which matches the server name
+[Mon Apr 02 17:57:23.828870 2018] [mpm_winnt:notice] [pid 10100:tid 680] AH00455: Apache/2.4.26 (Win32) OpenSSL/1.0.2l PHP/5.6.31 configured -- resuming normal operations
+[Mon Apr 02 17:57:23.828870 2018] [mpm_winnt:notice] [pid 10100:tid 680] AH00456: Apache Lounge VC11 Server built: Jun 18 2017 13:03:53
+[Mon Apr 02 17:57:23.828870 2018] [core:notice] [pid 10100:tid 680] AH00094: Command line: 'C:\\xampp\\apache\\bin\\httpd.exe -d C:/xampp/apache'
+[Mon Apr 02 17:57:23.860122 2018] [mpm_winnt:notice] [pid 10100:tid 680] AH00418: Parent: Created child process 1840
+[Mon Apr 02 17:57:24.641371 2018] [ssl:warn] [pid 1840:tid 536] AH01909: localhost:443:0 server certificate does NOT include an ID which matches the server name
+[Mon Apr 02 17:57:24.891370 2018] [ssl:warn] [pid 1840:tid 536] AH01909: localhost:443:0 server certificate does NOT include an ID which matches the server name
+[Mon Apr 02 17:57:24.953872 2018] [mpm_winnt:notice] [pid 1840:tid 536] AH00354: Child: Starting 150 worker threads.
+I suppose I could create a task in windows task scheduler and set it to run every 55 days (the default number of days win-acme uses to determine renewal - I believe that can be changed in a config file). So the task runs every 55 days at a time following the win-acme task.
+
+Or I could run it nightly, but I think that's begging for trouble from apache, which takes forever (30 seconds in the log above) to stop manually. Maybe I will try the nightly option and keep an eye on it. I'll reschedule the task to run at the time I wake up, so if there are any hiccups, I'll have a chance to fix it. I wake up early anyway.
+
+Only one last question. I don't know much about windows task scheduler. Will the actions in a task run sequentially? Or do they all trigger at the same time? Obviously the same time would defeat the whole purpose.
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-04-03 00:29
+
+To be honest, not many windows machines run continuously for 55 days anyway, mostly there is a monthly reboot for updates at least (second Tuesday of the month). The life of the Lets Encrypt Cert is 90 days - so you are probably safe to never have to manually restart apache, but I have had to manually restart hMailserver a couple of times to load the new certificate. Some users restart hMailserver daily as part of their backup process anyway - however I don't, I just backup live)
+
+In answer to your question about Task Scheduler.
+Consecutive actions in same task are run sequentially.
+If you want two action to be run simultaneous, then you need two tasks set for the same time.
+
+Apache on my Ubuntu machine restarts in about a second - that is part of my automated Cron job to update the certs
+Originally I set up WinSimple on my IIS on the machine with hMailserver and IIS restarts automatically as part of the update process.
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-03 00:43
+
+mattg wrote: ?2018-04-03 00:29
+To be honest, not many windows machines run continuously for 55 days anyway, mostly there is a monthly reboot for updates at least (second Tuesday of the month). The life of the Lets Encrypt Cert is 90 days - so you are probably safe to never have to manually restart apache,
+haha! That's probably true.
+
+I put the restart apache script in with the daily win-acme check just so I can see if its going to work unattended. If it does, I'll put both the restart apache and restart hmailserver scripts in a 55 day schedule.
+
+And by the way, I found a bunch of certificate checking services and signed up for a couple of free ones. Not that I really need it, but what the heck...
+
+https://community.letsencrypt.org/t/mon ... cont/37764
+Top
+User avatarDravion
+Senior user
+Senior user
+Posts: 1957
+Joined: 2015-09-26 11:50
+Location: Germany
+Contact: Contact Dravion
+Re: Step by step LetsEncrypt WinSimple
+Post by Dravion » 2018-04-03 10:05
+
+You dont need Apache2 to restart.
+Instead you should allways use systemctl reload httpd.service in a Production environment.
+This will just reload the apache2 config files without killing the mainprocess or one of its Forks/Threads.Reload will also check your configfiles
+for syntax errors and will not load the new config file if this would result in a service unavaiable situation. Keep allways an eye on syslog
+or your vHosts logs.
+
+ps: Letsencrypt supports a Apache2 Module, which can autorenew and reload the cert without the need of stopping/starting/restarting anything
+with or withoug a cronjob if you on Linux/Unix/Mac. On NT-Windows Systems its a diffrent Story..
+
+Check this:
+https://letsencrypt.org/2017/10/17/acme ... httpd.html
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-03 10:32
+
+Dravion wrote: ?2018-04-03 10:05
+You dont need Apache2 to restart.
+Instead you should allways use systemctl reload httpd.service
+It's this a windows command? I'm running Windows.
+Check this:
+https://letsencrypt.org/2017/10/17/acme ... httpd.html
+I definitely will. Thanks.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-03 11:37
+
+As mentioned before, I added restart apache service to the daily win-acme check for renewal scheduled task in order to make sure everything works unattended. It does. No problems to report. So I removed both restart apache and hmailserver scripts from that task and created a new task that runs every 55 days and is in sync with the win-acme schedule to actually renew. This task runs 15 minutes after the win-acme task.
+
+I have 3 actions in the restart services every 55 days task:
+
+1) a script that sends an email to my mobile phone SMS notifying me that these services are about to be restarted
+2) restart apache script
+3) restart hmailserver script
+
+I will be reminded to have a look and make sure everything went well. For belt and suspenders redundancy, I also created a calendar entry that repeats every 55 days and is in sync with this schedule. If one fails, I'll certainly pick it up some other way.
+
+So I guess that's about it on this topic: Creation, automatic renewal, automatic application... Life is good. :-)
+Top
+sprint
+Normal user
+Normal user
+Posts: 31
+Joined: 2018-01-31 01:36
+Re: Step by step LetsEncrypt WinSimple
+Post by sprint » 2018-04-04 04:24
+
+Use httpd -k restart to restart Apache without killing existing connections.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-04-04 19:47
+
+sprint wrote: ?2018-04-04 04:24
+Use httpd -k restart to restart Apache without killing existing connections.
+Thanks!
+Top
+mats
+Normal user
+Normal user
+Posts: 37
+Joined: 2018-05-06 20:58
+Re: Step by step LetsEncrypt WinSimple
+Post by mats » 2018-05-06 22:46
+
+This is my way of having letsencrypt.exe handle cert updates and restarting hmailserver when needed.
+
+letsencrypt calls a smple script i created (importhmailserver.cmd) with {0} {2} as parameters (ie the domain name and the pfx path)
+CODE: SELECT ALL
+
+powershell.exe c:\letsencrypt\scripts\importhmailserver.ps1 %1 %2 %3 %4 %5
+importhmailserver.cmd passes the parameters to importhmailserver.Ps1 which is the script that does the heavy lifting. By using a textfile to store the last modified timestamp of the certfile it can detect when the cert was changed and therefore it knows when it's time to update the cert and restart hmailserver
+CODE: SELECT ALL
+
+# simple script for wacs to update certs for Hmailserver. Uses a textfile - certdate.txt to determine if the cert has changed.
+# copies the certs to c:\mail_certs so that it becomes independent of the user running the script. Restarts service to awoid pw in script
+# expexts the certname as first parameter and PFX path as seccond
+ 
+$certname=$args[0]
+$targetfolder="c:\mail_certs"
+$path=$args[1]
+$path=$path.Substring(0,$path.lastindexofany("\"))
+
+
+#get the last change timestamp from the certfile
+$modtime=get-item ($path + "\$certname-chain.pem")
+
+#do we have a previus record of a cert timestamp?
+if (Test-Path($path + "\certdate.txt"))
+  {
+  # compare it to the the timestamp above (remember to format the data)
+  $filedate=Get-Content($path + "\certdate.txt")
+  if ($modtime.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss") -eq $filedate)
+    {
+    #it's the same timestamp. Got to be the same file then. do nothing 
+    write-host "nothing"
+
+    }
+  Else
+    {
+    # the timestamps differ. should be a new cert. Update the timestamp and install the cert
+    $mytextfile=New-Item ($path + "\certdate.txt") -ItemType file  -Value $modtime.LastWriteTime -force
+    Copy-Item ($path + "\$certname-chain.pem") -Destination $targetfolder
+    Copy-Item ($path + "\$certname-key.pem") -Destination $targetfolder
+    restart-service -name "hmailserver"
+    write-host "updated"
+    }
+  }
+else
+  {
+  #No timestamp file found. Should be the first run so create timestamp and install the cert 
+  $mytextfile=New-Item ($path + "\certdate.txt") -ItemType file  -Value $modtime.LastWriteTime -force
+  Copy-Item ($path + "\$certname-chain.pem") -Destination $targetfolder
+  Copy-Item ($path + "\$certname-key.pem") -Destination $targetfolder
+  restart-service -name "hmailserver"
+  write-host "updated"
+  }
+  
+There is probably a lot of bugs and huge opportunities for improvements so please, help yourselves ;)
+Top
+User avatarMaikl
+Normal user
+Normal user
+Posts: 39
+Joined: 2008-10-04 16:58
+Location: Innsbruck, Austria
+Contact: Contact Maikl
+Re: Step by step LetsEncrypt WinSimple
+Post by Maikl » 2018-07-29 13:50
+
+Thanks for that, it is really helpful.
+
+Only one Question: I don't like the idea to save a script including the admin password in plain text - why not having a batch file containing
+CODE: SELECT ALL
+
+@ECHO OFF
+NET STOP hMailServer
+NET START hMailServer
+The scheduled task itself runs with the highest privileges, so this should work. Is there something I did oversee?
+
+Best wishes
+Michael
+Top
+User avatarjimimaseye
+Moderator
+Moderator
+Posts: 9786
+Joined: 2011-09-08 17:48
+Re: Step by step LetsEncrypt WinSimple
+Post by jimimaseye » 2018-07-29 14:41
+
+Maikl wrote: ?2018-07-29 13:50
+Thanks for that, it is really helpful.
+
+Only one Question: I don't like the idea to save a script including the admin password in plain text - why not having a batch file containing
+CODE: SELECT ALL
+
+@ECHO OFF
+NET STOP hMailServer
+NET START hMailServer
+The scheduled task itself runs with the highest privileges, so this should work. Is there something I did oversee?
+
+Best wishes
+Michael
+Well yes, you could just stop and restart as you suggest.
+
+But if you are worried about someone SEEING the password that is embedded in this vbs script on your server that is tailored purely for a particular application/server on the machine, and yet they shouldnt be authorised to see things on your server, then you have bigger problems to worry about than someone sitting with unauthorised access to your server accessing and using this password to tinker with hmailserver.
+5.7 on test.
+SpamassassinForWindows 3.4.0 spamd service
+AV: Clamwin + Clamd service + sanesecurity defs : https://www.hmailserver.com/forum/viewtopic.php?f=21&t=26829
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-29 15:22
+
+jimimaseye wrote: ?2018-07-29 14:41
+Maikl wrote: ?2018-07-29 13:50
+Thanks for that, it is really helpful.
+
+Only one Question: I don't like the idea to save a script including the admin password in plain text - why not having a batch file containing
+CODE: SELECT ALL
+
+@ECHO OFF
+NET STOP hMailServer
+NET START hMailServer
+The scheduled task itself runs with the highest privileges, so this should work. Is there something I did oversee?
+
+Best wishes
+Michael
+Well yes, you could just stop and restart as you suggest.
+
+But if you are worried about someone SEEING the password that is embedded in this vbs script on your server that is tailored purely for a particular application/server on the machine, and yet they shouldnt be authorised to see things on your server, then you have bigger problems to worry about than someone sitting with unauthorised access to your server accessing and using this password to tinker with hmailserver.
+Security by obscurity?
+Top
+User avatarMaikl
+Normal user
+Normal user
+Posts: 39
+Joined: 2008-10-04 16:58
+Location: Innsbruck, Austria
+Contact: Contact Maikl
+Re: Step by step LetsEncrypt WinSimple
+Post by Maikl » 2018-07-29 18:09
+
+palinka wrote: ?2018-07-29 15:22
+jimimaseye wrote: ?2018-07-29 14:41
+Maikl wrote: ?2018-07-29 13:50
+Thanks for that, it is really helpful.
+
+Only one Question: I don't like the idea to save a script including the admin password in plain text - why not having a batch file containing
+CODE: SELECT ALL
+
+@ECHO OFF
+NET STOP hMailServer
+NET START hMailServer
+The scheduled task itself runs with the highest privileges, so this should work. Is there something I did oversee?
+
+Best wishes
+Michael
+Well yes, you could just stop and restart as you suggest.
+
+But if you are worried about someone SEEING the password that is embedded in this vbs script on your server that is tailored purely for a particular application/server on the machine, and yet they shouldnt be authorised to see things on your server, then you have bigger problems to worry about than someone sitting with unauthorised access to your server accessing and using this password to tinker with hmailserver.
+Security by obscurity?
+@jimimaseye: Sorry to say that, but this is definitely a very naive attitude - and I hope that I do not break any how-to-behave-rules when I say that in this forum, if so, I apologize. I don't fear that my security settings are bad enough to give everyone access to that script, but you never know. And then: Why should I have a file containing an administrator password in clear text on the machine? It is lesson 1 in IT security to avoid this... (btw, did you know that a Windows server holds an Administrators password in the credential cache in clear text until the admin is logged out? And an admin is not logged out when he disconnects from a Remote Desktop session, only as an example...)
+
+@palinka: +1, security by obscurity. Why giving someone the chance to find a password?
+
+Best wishes
+Michael
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-29 18:23
+
+I haven't tried this, but I wonder if copying the hashed administrator password from the hmailserver ini would work?
+Top
+User avatarjimimaseye
+Moderator
+Moderator
+Posts: 9786
+Joined: 2011-09-08 17:48
+Re: Step by step LetsEncrypt WinSimple
+Post by jimimaseye » 2018-07-29 18:25
+
+Maikl wrote: ?2018-07-29 18:09
+@jimimaseye: Sorry to say that, but this is definitely a very naive attitude - and I hope that I do not break any how-to-behave-rules when I say that in this forum, if so, I apologize. I don't fear that my security settings are bad enough to give everyone access to that script, but you never know. And then: Why should I have a file containing an administrator password in clear text on the machine? It is lesson 1 in IT security to avoid this... (btw, did you know that a Windows server holds an Administrators password in the credential cache in clear text until the admin is logged out? And an admin is not logged out when he disconnects from a Remote Desktop session, only as an example...)
+First, dont worry you havent said anything wrong. Its only discussions and opinions after all.
+
+I dont disagree with your idea of total security, you will not get any arguments from me there. However, can you argue against my statement: "But if you are worried about someone SEEING the password that is embedded in this vbs script on your server that is tailored purely for a particular application/server on the machine, and yet they shouldnt be authorised to see things on your server, then you have bigger problems to worry about " ?
+
+It's fact. If someone, or something, is on your system unauthorised then the least of your problems is them having a password in a VBS script (which runs in something they still probably dont know what it goes to or how to further manipulate); I would be more concerned about them having admin level access on your server in the first place (if they shouldnt) and the other damage they CAN do at windows level.
+
+Irrespective of our opinions above, I agreed to your suggestion of doing a stop/start of the service in order to get round your fear of storing the password in plain text....this time. But if you are/will be a serious user of Hmailserver and plan to do heavy usage of scripting to tailor it (which is a strength of HMS) then its futile - you WILL (unfortunately) have to store it in the VBS in plain text...eventually. On that bombshell, I refer you to my initial statement.
+5.7 on test.
+SpamassassinForWindows 3.4.0 spamd service
+AV: Clamwin + Clamd service + sanesecurity defs : https://www.hmailserver.com/forum/viewtopic.php?f=21&t=26829
+Top
+User avatarjimimaseye
+Moderator
+Moderator
+Posts: 9786
+Joined: 2011-09-08 17:48
+Re: Step by step LetsEncrypt WinSimple
+Post by jimimaseye » 2018-07-29 18:25
+
+palinka wrote: ?2018-07-29 18:23
+I haven't tried this, but I wonder if copying the hashed administrator password from the hmailserver ini would work?
+It doesnt. The plain text authentication, via the COMApi, is the same as typing in plain text password when logging in to HmailAdmin. The program will then process it to a hash and compare that hash against what is written in the INI file (and accept or reject accordingly).
+5.7 on test.
+SpamassassinForWindows 3.4.0 spamd service
+AV: Clamwin + Clamd service + sanesecurity defs : https://www.hmailserver.com/forum/viewtopic.php?f=21&t=26829
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-29 18:35
+
+Maikl wrote: ?2018-07-29 18:09
+(btw, did you know that a Windows server holds an Administrators password in the credential cache in clear text until the admin is logged out? And an admin is not logged out when he disconnects from a Remote Desktop session, only as an example...)
+Change RDC port number, block said port with firewall, force connect via lan through vpn, among other strategies to lock down RDC. Obsurity. 8)
+Top
+User avatarMaikl
+Normal user
+Normal user
+Posts: 39
+Joined: 2008-10-04 16:58
+Location: Innsbruck, Austria
+Contact: Contact Maikl
+Re: Step by step LetsEncrypt WinSimple
+Post by Maikl » 2018-07-29 19:53
+
+palinka wrote: ?2018-07-29 18:35
+Maikl wrote: ?2018-07-29 18:09
+(btw, did you know that a Windows server holds an Administrators password in the credential cache in clear text until the admin is logged out? And an admin is not logged out when he disconnects from a Remote Desktop session, only as an example...)
+Change RDC port number, block said port with firewall, force connect via lan through vpn, among other strategies to lock down RDC. Obsurity. 8)
+Sure, all of that, and even more… But this would go too far to be discussed in this forum - it is about hMailServer, and not RDC or Windows security. I just wanted to drop an example, and I know that a lot of - even qualified Windows Admins - are not aware of this little fact.
+
+Thanks for all your answers. I'll stay with the NET STOP and NET START method, if there isn't anything speaking against it :-)
+
+Again, a big thank you @palinka, who originally posted how to do it. Are you OK if I write an article in German on my blog that is more or less a translation of your steps (and uses IIS instead of Apache)?
+
+Best wishes
+Michael
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-29 22:49
+
+Consider it public domain. Actually I don't think I even have much choice in the matter, but that's besides the point. ;-)
+
+Please feel free to use it however you like.
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-07-30 02:14
+
+Maikl wrote: ?2018-07-29 18:09
+(btw, did you know that a Windows server holds an Administrators password in the credential cache in clear text until the admin is logged out? And an admin is not logged out when he disconnects from a Remote Desktop session, only as an example...)
+Maikl wrote: ?2018-07-29 19:53
+But this would go too far to be discussed in this forum - it is about hMailServer, and not RDC or Windows security. I just wanted to drop an example, and I know that a lot of - even qualified Windows Admins - are not aware of this little fact.
+I not sure that anything goes too far to be discussed here
+
+I'd love to read more about this specific subject. Where can I find some reading / research material?
+
+As it turns out, we have passwords written in many scripts, including eventhandlers.vbs and backup scripts.
+Also we often use the line
+jimimaseye wrote: ?2018-07-29 14:41
+...if you are worried about someone SEEING the password that is embedded in this ... script ... then you have bigger problems to worry about
+We have had people ask about other other ways to accomplish access without passwords being written in scripts, perhaps we need to look at this more seriously....
+
+I for one would also love to see TFA (Two Factor Authentication) added to hMailserver - but that's also hard to implement with scripts...
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+User avatarjimimaseye
+Moderator
+Moderator
+Posts: 9786
+Joined: 2011-09-08 17:48
+Re: Step by step LetsEncrypt WinSimple
+Post by jimimaseye » 2018-07-30 09:07
+
+2 questions:
+
+Question 1:
+palinka wrote: ?2018-04-01 17:40
+7) Renewals. Very important. The renewal task is already set up. However once the certificate is renewed, it will be a completely different certificate (with the same name). So you must restart hmailserver in order to load the new certificate. In another thread, Matt posted a useful script that you add to your scheduled task.
+Ive just read through (for the first time). Presumably, as it automates the renewal at some random time in the day a day before (before the last moment of the previous one expiring, then the daily nightly backup that already has a service stop/restart will be sufficient (to avoid the need a separate stop/restart)? OR does the renewal automate itself at the very last second (ie, expires 14:00:00 and so is scheduled to renew at 13:59:00?
+
+I guess the real question is what is the fixed time for scheduling the restart (we will need this to determine what task scheduler date/time/period we need to enter)?
+
+Question 2:
+There are those of us that are not running webservers and therefore doesnt have access to apache or IIS services. The 'LetsEncrypt' website creation process allows you to do it by using other verification such as a 'DNS Challenge' (involciving adding a TXT record to your domain DNS). Does this procedure give an option for using that? (Ive had a quick look through your instructions at the "How would you like to validate this certificate?:" but it doesnt stand out).
+5.7 on test.
+SpamassassinForWindows 3.4.0 spamd service
+AV: Clamwin + Clamd service + sanesecurity defs : https://www.hmailserver.com/forum/viewtopic.php?f=21&t=26829
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-07-30 11:19
+
+#1 The certs have a 90 day life
+by default when a renewal script is run (every day via scheduled task), a new certificate is only requested with 30 days of the end of life. There is a 30 day crossover.
+
+Any restart in that 30 days will load the new cert
+(I don't actually stop and restart the service, just pause and resume the hmailserver - but either will work fine)
+
+So yes, if you restart as part of your backup routine this is a redundant restart. I don't restart for weeks / months on end normally, and have been caught once or twice with an out of date certificate because my hmailserver hasn't been restarted in the 30 day overlap.
+
+#2 Assuming that the DNS challenge is consistently for the same DNS record, then yes this could work. I've never tried that, but a similar DNS record is the google-site-verification txt record and it doesn't change. If I have a txt record with the correct 'code' in it, then Google knows that I've extra authenticated my domain
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-30 11:50
+
+mattg wrote: ?2018-07-30 11:19
+a new certificate is only requested with 30 days of the end of life. There is a 30 day crossover.
+The default renewal try for winacme is 55 days. Minor point. Actually you can renew as often as you like, but there is a rate limit of 5 per week. So if you tried to renew nightly you'd hit the rate limit before the end of one week.
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-07-30 12:12
+
+Sorry, yes I was talking about the linux scripts not the WinAcme scripts
+
+My webserver is on Ubuntu / Apache2, and that's where my certificates are requested.
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+User avatarjimimaseye
+Moderator
+Moderator
+Posts: 9786
+Joined: 2011-09-08 17:48
+Re: Step by step LetsEncrypt WinSimple
+Post by jimimaseye » 2018-07-30 12:45
+
+Just taking another look about this:
+jimimaseye wrote: ?2018-07-30 09:07
+Question 2:
+There are those of us that are not running webservers and therefore doesnt have access to apache or IIS services. The 'LetsEncrypt' website creation process allows you to do it by using other verification such as a 'DNS Challenge' (involciving adding a TXT record to your domain DNS). Does this procedure give an option for using that? (Ive had a quick look through your instructions at the "How would you like to validate this certificate?:" but it doesnt stand out).
+
+
+Presumably the option for this would be "2" from here:
+palinka wrote: ?2018-04-01 17:40
+In my case here, because I'm only running it on one test domain in order to produce this tutorial, I will enter: letencrypttest.ddnsfree.com
+CODE: SELECT ALL
+
+ [INFO] Plugin Manual generated target [Manual] [1 binding - letencrypttest.ddnsfree.com]
+
+ 1: [dns-01] Azure DNS
+ 2: [dns-01] Run external program/script to create and update records
+ 3: [http-01] Save file on local (network) path
+ 4: [http-01] Self-host verification files (recommended)
+ 5: [http-01] Upload verification file to FTP(S) server
+ 6: [http-01] Upload verification file to WebDav path
+ C: Cancel
+
+ How would you like to validate this certificate?:
+Choose 3 to save file on local path.
+5.7 on test.
+SpamassassinForWindows 3.4.0 spamd service
+AV: Clamwin + Clamd service + sanesecurity defs : https://www.hmailserver.com/forum/viewtopic.php?f=21&t=26829
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2018-07-30 12:50
+
+Yes I think so
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-30 12:51
+
+Yes, but they don't provide the script! I'm sure if you searched around you could find one to use as a template.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-30 13:17
+
+https://www.eff.org/deeplinks/2018/02/t ... validation
+
+It looks like DNS challenge requires a new txt record at every renewal.
+Top
+User avatarjimimaseye
+Moderator
+Moderator
+Posts: 9786
+Joined: 2011-09-08 17:48
+Re: Step by step LetsEncrypt WinSimple
+Post by jimimaseye » 2018-07-30 13:33
+
+palinka wrote: ?2018-07-30 13:17
+https://www.eff.org/deeplinks/2018/02/t ... validation
+
+It looks like DNS challenge requires a new txt record at every renewal.
+Hmmm. That's a bugger. So effectively prevents the automation of renewal if people (like us) only have the DNS Challenge option.
+5.7 on test.
+SpamassassinForWindows 3.4.0 spamd service
+AV: Clamwin + Clamd service + sanesecurity defs : https://www.hmailserver.com/forum/viewtopic.php?f=21&t=26829
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-30 13:44
+
+jimimaseye wrote: ?2018-07-30 13:33
+palinka wrote: ?2018-07-30 13:17
+https://www.eff.org/deeplinks/2018/02/t ... validation
+
+It looks like DNS challenge requires a new txt record at every renewal.
+Hmmm. That's a bugger. So effectively prevents the automation of renewal if people (like us) only have the DNS Challenge option.
+As I was searching around, I found a few hints at automatic renewal but nothing specific. They give you the bare bones, but you need to write a script that can automatically login to your DNS host and change values. Too complicated for me. But if you make it work, you will be rewarded with wildcard certificates, which are only available via DNS validation.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2018-07-30 13:57
+
+https://github.com/joohoi/acme-dns/blob ... /README.md
+
+Worth looking into. Linux only unfortunately for me...
+Top
+User avatarDravion
+Senior user
+Senior user
+Posts: 1957
+Joined: 2015-09-26 11:50
+Location: Germany
+Contact: Contact Dravion
+Re: Step by step LetsEncrypt WinSimple
+Post by Dravion » 2018-07-30 14:08
+
+There are some rate-limits if it comes to Letsencrypt requests:
+
+*Certificates per Registered Domain, (20 per week)
+*2,000 unique subdomains per week
+*Duplicate Certificate limit of 5 certificates per week (if you enforce a cert renewal)
+*There is a Failed Validation limit of 5 failures per account, per hostname, per hour
+*You can create a maximum of 10 Accounts per IP Address per 3 hours
+
+If you’ve hit a rate limit, we don’t have a way to temporarily reset it. You’ll need to wait until the rate limit expires after a week.
+https://letsencrypt.org/docs/rate-limits/
+
+So, dont use letsencrypt to issue a series of test certificates because it will ban you until next weeks reset.
+Top
+User avatarMaikl
+Normal user
+Normal user
+Posts: 39
+Joined: 2008-10-04 16:58
+Location: Innsbruck, Austria
+Contact: Contact Maikl
+Re: Step by step LetsEncrypt WinSimple
+Post by Maikl » 2018-07-31 18:44
+
+mattg wrote: ?2018-07-30 02:14
+Maikl wrote: ?2018-07-29 18:09
+(btw, did you know that a Windows server holds an Administrators password in the credential cache in clear text until the admin is logged out? And an admin is not logged out when he disconnects from a Remote Desktop session, only as an example...)
+Maikl wrote: ?2018-07-29 19:53
+But this would go too far to be discussed in this forum - it is about hMailServer, and not RDC or Windows security. I just wanted to drop an example, and I know that a lot of - even qualified Windows Admins - are not aware of this little fact.
+I not sure that anything goes too far to be discussed here
+
+I'd love to read more about this specific subject. Where can I find some reading / research material?
+Sorry for the delayed answer on this. Well, to be true, I exaggerated a bit saying the password is there in clear text - it is hashed. But the hash can also be used to connect to other servers in the network as an administrator, this is called a Pass-the-Hash-attack, you should find enough information about it when you google… And: there are tools that can be used to decrypt the hash, if the password is not too complicated. The bad thing is: There are PowerShell scripts that are able to load these tools into the server's memory from the Internet - they are not stored on the hard disk and therefore, these attacks are hard to find. Google for "mimikatz".
+Sorry, I am not allowed to tell you more details. But believe me: I have seen this with my own eyes.
+
+Best wishes
+Michael
+Top
+turboturboturbo
+New user
+New user
+Posts: 1
+Joined: 2019-05-05 04:42
+Re: Step by step LetsEncrypt WinSimple
+Post by turboturboturbo » 2019-05-05 04:50
+
+every time I do this I get "no start line error" in my hmailer log. Certs work fine for https over port *443 but I can get it to work with hmailserver. Using iis but shouldn't matter. Certs are valid and I chose option 3 below.
+
+
+1: IIS Central Certificate Store
+2: Windows Certificate Store
+3: Write .pem files to folder (Apache, ngnix, etc.)
+
+How would you like to store this certificate?: 3
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2019-05-05 09:11
+
+Did you restart the hMailserver service?
+
+I get the pem files with my apache server running on Ubuntu, and access these from hMailserver directly via network shares using UNC paths in the ADMIN GUI and it works fine
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+RBoy
+New user
+New user
+Posts: 26
+Joined: 2018-12-04 04:28
+Re: Step by step LetsEncrypt WinSimple
+Post by RBoy » 2019-06-06 17:49
+
+Maikl wrote: ?2018-07-29 13:50
+Thanks for that, it is really helpful.
+
+Only one Question: I don't like the idea to save a script including the admin password in plain text - why not having a batch file containing
+CODE: SELECT ALL
+
+@ECHO OFF
+NET STOP hMailServer
+NET START hMailServer
+The scheduled task itself runs with the highest privileges, so this should work. Is there something I did oversee?
+
+Best wishes
+Michael
+Some feedback, this is a better option that running the VBS script in the first post. This is because for some reason the window service manager isn't able to stop the hMailServer service. With the scripts it hangs indefinitely at
+Call oApp.Stop
+where as with this batch file it times out after a while with
+NET STOP hMailServer
+The service is not responding to the control function.
+I have no idea why it's suddenly not able to stop the service, but atleast this way it doesn't hang the server completely, it will timeout and then start the server again (that seems to work for some reason)
+
+I have started a separate topic for this issue and hopefully someone can shed some idea on what it happens here: https://www.hmailserver.com/forum/viewt ... 00#p212400
+Top
+User avatarSorenR
+Senior user
+Senior user
+Posts: 5746
+Joined: 2006-08-21 15:38
+Location: Denmark
+Re: Step by step LetsEncrypt WinSimple
+Post by SorenR » 2019-06-06 22:37
+
+Just a heads up...
+
+This will stop/start the hMailServer service (program).
+CODE: SELECT ALL
+
+@ECHO OFF
+NET STOP hMailServer
+NET START hMailServer
+This will PAUSE the hMailServer service (program). hMailServer will STOP sending and receiving mails but you can still work with your mailbox.
+CODE: SELECT ALL
+
+Call oApp.Stop
+Call oApp.Start
+So if you expect "Call oApp.Stop" would stop hmailserver and return you to a prompt then you are in for an eternal wait :mrgreen:
+SørenR.
+
+“Knock, knock.”
+“Who’s there?”
+very long pause….
+“Java.”
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2019-08-19 13:41
+
+mattg wrote: ?2018-04-03 00:29
+To be honest, not many windows machines run continuously for 55 days anyway, mostly there is a monthly reboot for updates at least (second Tuesday of the month). The life of the Lets Encrypt Cert is 90 days - so you are probably safe to never have to manually restart apache
+This has been true up to this morning. What I found was the time between 55 days (new cert added) and 90 days (old cert expires) is the time you need to restart. I finally went that long without restarting. Incredible! Anyway, I woke up to an expired certificate in apache, which is bad news since I receive mail via activesync on port 443. I NEED apache to be functioning properly.
+
+The answer is so simple, I can't believe it took this long to figure it out. If the cert is updated, the name doesn't change, but the file attributes do of course, so just see if the modified date is newer than yesterday. Run daily AFTER the daily win simple task completes.
+
+Powershell:
+CODE: SELECT ALL
+
+$ErrorActionPreference = 'silentlycontinue'
+
+$ServiceName = 'Apache2.4'
+$CertLocation = 'C:\ProgramData\letsencrypt-win-simple\httpsacme-v01.api.letsencrypt.org\mydomain.com-chain.pem'
+
+Function SendNotification($Body) {
+	$EmailFrom = "notifier-account@gmail.com"
+	$EmailTo = "1234567890@tmomail.net" 
+	$SMTPServer = "smtp.gmail.com" 
+	$SMTPAuthUser = "notifier-account@gmail.com"
+	$SMTPAuthPass = "supersecretpassword"
+	$Subject = "Windows Service Notification" 
+	$SMTPClient = New-Object Net.Mail.SmtpClient($SmtpServer, 587) 
+	$SMTPClient.EnableSsl = $true 
+	$SMTPClient.Credentials = New-Object System.Net.NetworkCredential($SMTPAuthUser, $SMTPAuthPass); 
+	$SMTPClient.Send($EmailFrom, $EmailTo, $Subject, $Body)
+}
+
+$lastModifiedDate = (Get-Item $CertLocation).LastWriteTime
+if ($lastModifiedDate gt (Get-Date).AddDays(-1)) {
+	Restart-Service $ServiceName
+	$Body = "ATTENTION! Apache service RESTARTING to load new SSL certificate. Check status NOW!" 
+	SendNotification $Body
+	Start-Sleep -seconds 60
+	(get-service $ServiceName).Refresh()
+	if ((get-service $ServiceName).Status -ne 'Running'){
+		Start-Service $ServiceName
+		$Body = "ATTENTION! Apache service RESTARTING due to a fault (new SSL certificate) - 2nd attempt. Check status NOW!" 
+		SendNotification $Body
+		Start-Sleep -seconds 60
+		(get-service $ServiceName).Refresh()
+		if ((get-service $ServiceName).Status -ne 'Running'){
+			$Body = "ATTENTION! Apache service could not be restarted. Check status NOW!" 
+			SendNotification $Body
+		}
+	}
+}
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2019-09-15 13:41
+
+^^ This worked for me this morning. :mrgreen:
+
+Its nice to know that things work for sure when it takes a month to find out.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2019-09-20 23:51
+
+Update to restart apache script. Works with multiple certificates. Looks for the newest one in the certificate store folder and then restarts apache service if within 1 day old. Change $ServiceName to whatever is shown in the Services console > properties to restart the service of your choice - even 'hMailServer'. :mrgreen:
+CODE: SELECT ALL
+
+$ErrorActionPreference = 'silentlycontinue'
+
+$ServiceName = 'Apache2.4'
+$CommonSvcName = 'Apache'
+$CertLocation = 'C:\xampp\certificates'
+
+Function SendNotification($Body) {
+	$EmailFrom = "notifier-account@gmail.com"
+	$EmailTo = "1234567890@tmomail.net" 
+	$SMTPServer = "smtp.gmail.com" 
+	$SMTPAuthUser = "notifier-account@gmail.com"
+	$SMTPAuthPass = "supersecretpassword"
+	$Subject = "Windows Service Notification" 
+	$SMTPClient = New-Object Net.Mail.SmtpClient($SmtpServer, 587) 
+	$SMTPClient.EnableSsl = $true 
+	$SMTPClient.Credentials = New-Object System.Net.NetworkCredential($SMTPAuthUser, $SMTPAuthPass); 
+	$SMTPClient.Send($EmailFrom, $EmailTo, $Subject, $Body)
+}
+
+$NewestCert = Get-ChildItem -Path $CertLocation | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+$LastModifiedDate = (Get-Item $CertLocation\$NewestCert).LastWriteTime
+If ($LastModifiedDate -gt (Get-Date).AddDays(-1)){
+	Restart-Service $ServiceName
+	$Body = "$CommonSvcName service RESTARTING to load new SSL certificate." 
+	SendNotification $Body
+	Start-Sleep -seconds 60
+	(Get-Service $ServiceName).Refresh()
+	If ((Get-Service $ServiceName).Status -ne 'Running'){
+		Start-Service $ServiceName
+		$Body = "$CommonSvcName service RESTARTING due to a fault (new SSL certificate) - 2nd attempt." 
+		SendNotification $Body
+		Start-Sleep -seconds 60
+		(Get-Service $ServiceName).Refresh()
+		If ((Get-Service $ServiceName).Status -ne 'Running'){
+			$Body = "$CommonSvcName service could not be restarted." 
+			SendNotification $Body
+		}
+	}
+}
+Top
+User avatarmattg
+Moderator
+Moderator
+Posts: 22217
+Joined: 2007-06-14 05:12
+Location: 'The Outback' Australia
+Re: Step by step LetsEncrypt WinSimple
+Post by mattg » 2020-01-22 12:29
+
+Great thing about Letsencrypt is their level of trust in web browsers
+Just 'cause I link to a page and say little else doesn't mean I am not being nice.
+https://www.hmailserver.com/documentation
+Top
+User avatarkatip
+Senior user
+Senior user
+Posts: 1063
+Joined: 2006-12-22 07:58
+Location: Istanbul
+Re: Step by step LetsEncrypt WinSimple
+Post by katip » 2020-01-22 13:33
+
+i'm trying to upgrade my win-acme client to be ready for acme-v2.
+https://community.letsencrypt.org/t/end ... mev1/88430
+import from v1 looks ok but certs updates fail with some error like "object entry not found..." or similar.
+does anyone have an experience with win-acme v2 client?
+Katip
+--
+HMS 5.7, MariaDB 10.4.10, SA 3.4.4, ClamAV 0.103.5
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2020-01-22 13:45
+
+katip wrote: ?2020-01-22 13:33
+i'm trying to upgrade my win-acme client to be ready for acme-v2.
+https://community.letsencrypt.org/t/end ... mev1/88430
+import from v1 looks ok but certs updates fail with some error like "object entry not found..." or similar.
+does anyone have an experience with win-acme v2 client?
+V2 is radically different. A total re-write. You may need to update .net, among other things.
+
+https://pkisharp.github.io/win-acme/man ... quirements
+Top
+User avatarkatip
+Senior user
+Senior user
+Posts: 1063
+Joined: 2006-12-22 07:58
+Location: Istanbul
+Re: Step by step LetsEncrypt WinSimple
+Post by katip » 2020-01-22 14:43
+
+palinka wrote: ?2020-01-22 13:45
+V2 is radically different. A total re-write. You may need to update .net, among other things.
+https://pkisharp.github.io/win-acme/man ... quirements
+my .Net is 4.8 from November update.
+i don't think it's a system requirement issue. in fact import succeeds without error. folders in ProgramData and json files are created
+here the log output:
+CODE: SELECT ALL
+
+2020-01-22 15:07:13.330 +03:00 [INF] Software version 2.1.3.671 (RELEASE, PLUGGABLE) started
+2020-01-22 15:07:13.393 +03:00 [WRN] Scheduled task not configured yet
+2020-01-22 15:07:13.393 +03:00 [INF] No command line arguments provided
+2020-01-22 15:07:36.659 +03:00 [INF] Importing renewal for imap.mydomain.com
+2020-01-22 15:07:36.721 +03:00 [INF] Importing renewal for mail.mydomain.com
+2020-01-22 15:07:36.721 +03:00 [INF] Importing renewal for pop.mydomain.com
+2020-01-22 15:07:36.721 +03:00 [INF] Importing renewal for smtp.mydomain.com
+2020-01-22 15:07:40.846 +03:00 [WRN] Disable existing task letsencrypt-win-simple httpsacme-v01.api.letsencrypt.org in Windows Task Scheduler to prevent duplicate renewals
+(import done) <--- added by me
+(now trying to list certs subject to renewal - option "L" in command menu) <--- added by me
+2020-01-22 15:24:31.960 +03:00 [ERR] Unable to read renewal 3DV8XONl6kWdvGg2YFvVgQ.renewal.json: Object reference not set to an instance of an object.
+2020-01-22 15:24:31.960 +03:00 [ERR] Unable to read renewal KiVpHEh1lU-J3tB_gSBhEw.renewal.json: Object reference not set to an instance of an object.
+2020-01-22 15:24:31.960 +03:00 [ERR] Unable to read renewal lk6f_INl6Eqxx2zpgspttw.renewal.json: Object reference not set to an instance of an object.
+2020-01-22 15:24:31.960 +03:00 [ERR] Unable to read renewal RXSzCoK0CEiQhtjD0qU9WQ.renewal.json: Object reference not set to an instance of an object.
+2020-01-22 15:24:31.960 +03:00 [WRN] No options available
+created json files all 4 end with:
+"InstallationPluginOptions": [],
+"History": [
+{
+"Date": "2020-01-22T12:07:36.7218492Z",
+"Success": false,
+"ErrorMessage": "Imported"
+}
+]
+}
+:?:
+Katip
+--
+HMS 5.7, MariaDB 10.4.10, SA 3.4.4, ClamAV 0.103.5
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2020-01-22 15:09
+
+You could try leaving a message on github. The developer is pretty responsive.
+
+https://github.com/PKISharp/win-acme/issues
+Top
+User avatarkatip
+Senior user
+Senior user
+Posts: 1063
+Joined: 2006-12-22 07:58
+Location: Istanbul
+Re: Step by step LetsEncrypt WinSimple
+Post by katip » 2020-01-22 20:05
+
+palinka wrote: ?2020-01-22 15:09
+You could try leaving a message on github. The developer is pretty responsive.
+
+https://github.com/PKISharp/win-acme/issues
+yep, it's clear now:
+Due to a limitation of the underlying .NET Core 3.1 framework, the latest version of win-acme unfortunately does not support Windows Server 2008.
+..which is my case.
+Katip
+--
+HMS 5.7, MariaDB 10.4.10, SA 3.4.4, ClamAV 0.103.5
+Top
+User avatarDravion
+Senior user
+Senior user
+Posts: 1957
+Joined: 2015-09-26 11:50
+Location: Germany
+Contact: Contact Dravion
+Re: Step by step LetsEncrypt WinSimple
+Post by Dravion » 2020-01-22 20:17
+
+That's why i prefer Native Apps, compiled for the Target Operating system instead of a fancy VM, a Sandbox or Interpreter Environments.
+
+As Programmer (if you know what you are doing) you can develop a Native Win32-App which can run from Win95 up to Windows 10/Windows Server2000 upto 2019 (incl. 64-Bit)
+without the need of .NET, .NET-Core, Windows Universal App Runtime (UWP), without ATL or MFC Runtime ect.
+
+Just by using a Native C/C++ Compiler.
+
+Of cause, .NET and Java having some fancy new Stuff but it's just candy. You really don't need it to get things done.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2020-01-22 21:21
+
+Dravion wrote: ?2020-01-22 20:17
+Of cause, .NET and Java having some fancy new Stuff but it's just candy. You really don't need it to get things done.
+Ironically, I recently removed all references to NetFirewallRule and replaced them with Netsh in my firewall ban project due to a request from someone running win server 2008. Backward compatibility is important.
+Top
+User avatarSorenR
+Senior user
+Senior user
+Posts: 5746
+Joined: 2006-08-21 15:38
+Location: Denmark
+Re: Step by step LetsEncrypt WinSimple
+Post by SorenR » 2020-01-22 22:23
+
+I use this https://github.com/Neilpang/acme.sh from my NAS.
+
+It is tested on Windows (cygwin with curl, openssl and crontab included).
+
+https://kb.virtubox.net/knowledgebase/h ... -sh-nginx/
+SørenR.
+
+“Knock, knock.”
+“Who’s there?”
+very long pause….
+“Java.”
+Top
+alescan
+Normal user
+Normal user
+Posts: 66
+Joined: 2014-11-11 17:29
+Location: Italy
+Contact: Contact alescan
+Re: Step by step LetsEncrypt WinSimple
+Post by alescan » 2020-02-21 12:16
+
+Hi everyone,
+I recentrly discovered https://certifytheweb.com/ (The SSL Certificate Manager for Windows, powered by Let's Encrypt) and made a simple script to automatize the renewal process.
+You only have to modify the crt and key path and set it in the post-request script page of the program and add to the path environment variable the openssl directory
+CODE: SELECT ALL
+
+param($result)
+$latest = $result.ManagedItem.CertificatePath
+
+openssl pkcs12 -in $latest -out C:\path\to\private\key\public.key -nocerts -nodes -passin pass:
+openssl pkcs12 -in $latest -out C:\path\to\public\crt\public.crt -nokeys -passin pass:
+
+Restart-Service -Name hMailServer -Force
+Hope can help some of you!
+
+Bye!
+HMS 5.6.8 B2538 on Win Server 2016 Standard with SQL Server 2019
+Top
+RBoy
+New user
+New user
+Posts: 26
+Joined: 2018-12-04 04:28
+Re: Step by step LetsEncrypt WinSimple
+Post by RBoy » 2020-05-18 16:52
+
+After upgrading to acme v2, I've noticed that when the certificate is renews, win-acme now generates a new filename for each site renewal and it's some random GUID. That is creating an issue with hmailserver since you can only configure a static filename.
+
+Does anyone know how to get around this problem and make win-acme generate a static filename for each site on renewal (like v1 used to to)? Or any other workaround on how to get hmailserver work with the v2 win acme?
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2020-05-18 17:22
+
+RBoy wrote: ?2020-05-18 16:52
+After upgrading to acme v2, I've noticed that when the certificate is renews, win-acme now generates a new filename for each site renewal and it's some random GUID. That is creating an issue with hmailserver since you can only configure a static filename.
+
+Does anyone know how to get around this problem and make win-acme generate a static filename for each site on renewal (like v1 used to to)? Or any other workaround on how to get hmailserver work with the v2 win acme?
+There is an option to export to pem. Use that and choose the folder you want them exported to. The filenames will be like before (mydomain-chain.pem, mydomain-crt.pem, mydomain-key.pem).
+Top
+RBoy
+New user
+New user
+Posts: 26
+Joined: 2018-12-04 04:28
+Re: Step by step LetsEncrypt WinSimple
+Post by RBoy » 2020-05-18 22:21
+
+Thanks. From what I read, if I use a certificate store then IIS will stop working. I'm using using IIS and hMailServer on the same machine with the same domain. Any pointers on how I can use both with win acme without breaking each other.
+Top
+palinka
+Senior user
+Senior user
+Posts: 3958
+Joined: 2017-09-12 17:57
+Re: Step by step LetsEncrypt WinSimple
+Post by palinka » 2020-05-18 22:41
+
+As far as I know, you can set up as many export routines as you want: one for pem, one for pfx, another one for pem, etc.
+
+
+
+
+v=spf1 ip4:192.168.0.0/16 include:_spf.google.com include:sendyourmail.com ~all	
+Servers between 192.168.0.0 and 192.168.255.255
+Google Workspace
+Third-party service Sendyourmail
