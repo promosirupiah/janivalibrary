@@ -1,0 +1,60 @@
+<?php
+function convertHTMLtoJS($html){
+	if(is_string($html)){
+		$type = "string";
+	}
+	else{
+		$type = get_class($html);
+	}
+	switch($type){
+		case "DOMDocument":
+		case "DOMElement":
+			$id = $html->nodeName."_".md5(uniqid())."_element";
+			if($html->nodeName != "#document"){
+				$code = "var ".$id." = document.createElement('".$html->nodeName."');\n";
+			}
+			else{
+				$code = "";
+			}
+			if(!!$html->attributes){ 
+				foreach($html->attributes as $attr){
+					$code .= $id.".setAttribute('".$attr->name."', '".$attr->value."');\n";
+				}
+			}
+			if(!!$html->childNodes){
+				foreach($html->childNodes as $child){
+					if($child->nodeType == XML_TEXT_NODE){
+						$code .= $id.".appendChild(document.createTextNode('".htmlentities($child->nodeValue)."'));\n";
+					}
+					else{
+						$element = convertHTMLtoJS($child);
+						$code .= $element["code"];
+						if($html->nodeName != "#document"){
+							$code .= $id.".appendChild(".$element["id"].");\n";
+						}
+						else{
+							$id = $element["id"];
+						}
+					}
+				}
+			}
+			return array("code"=>$code, "id"=>$id);
+			break;
+		case "DOMDocumentType":
+			return array("code"=>"","id"=>"");
+			break;
+		default:
+		case "string":
+			$dom = new DOMDocument();
+			$dom->strictErrorChecking = FALSE;
+			$dom->loadHTML($html);
+			$result = convertHTMLtoJS($dom);
+			return $result;
+			break;
+	} 
+	return NULL;
+}
+//$result = convertHTMLtoJS("<html><head><title>teste</title></head><body style='background:red;'>ola <span id='testando'>teste</span> do mundo</body></html>"); // gets a array with id of the first Child and the code of the rest..
+//echo $result["code"]; // to show the code
+// echo "document.body.appendChild(".$result["id"].")"; // To show the result in document.body
+?>
