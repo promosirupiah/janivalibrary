@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konversi File ke Base64</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 700px; margin: auto; }
+        textarea { width: 100%; height: 300px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Form Ubah File Menjadi Base64</h1>
+        
+        <input type="file" id="fileInput" accept="*/*">
+        <br><br>
+        
+        <button onclick="konversiKeBase64()" style="padding: 10px 20px; font-size: 16px;">
+            🚀 Ubah ke Base64
+        </button>
+        
+        <div id="hasil" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        function konversiKeBase64() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const hasilDiv = document.getElementById('hasil');
+
+            if (!file) {
+                hasilDiv.innerHTML = `<p style="color:red;">❌ Silakan pilih file terlebih dahulu!</p>`;
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                // event.target.result = data URL lengkap (data:mime;base64,....)
+                const dataURL = event.target.result;
+                
+                // Ambil hanya string Base64-nya (tanpa prefix)
+                const base64String = dataURL.split(',')[1];
+
+                hasilDiv.innerHTML = `
+                    <h3>✅ Berhasil dikonversi!</h3>
+                    <p><strong>Nama file:</strong> ${file.name}</p>
+                    <p><strong>Ukuran:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                    <p><strong>Tipe:</strong> ${file.type || 'unknown'}</p>
+                    
+                    <strong>Data URL (lengkap):</strong><br>
+                    <textarea readonly>${dataURL}</textarea>
+                    
+                    <br><br>
+                    <strong>Base64 saja (tanpa prefix):</strong><br>
+                    <textarea readonly>${base64String}</textarea>
+                    
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                        Kamu bisa copy-paste Base64 di atas ke database, API, dll.
+                    </p>
+                `;
+            };
+
+            reader.onerror = function () {
+                hasilDiv.innerHTML = `<p style="color:red;">❌ Terjadi kesalahan saat membaca file.</p>`;
+            };
+
+            // Baca file sebagai Data URL (Base64)
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+</html>
