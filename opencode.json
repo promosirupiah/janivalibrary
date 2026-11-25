@@ -1008,7 +1008,7 @@
       },
       "models": {
         "glm-4.7-flash": {
-          "name": "GLM 4.7 Flash | INPUT $0.07/1M | OUTPUT $0.4/1M",
+          "name": "GLM 4.7 Flash | OUTPUT $0.4/1M",
           "modelID": "zai-org/glm-4.7-flash",
           "limit": {
             "context": 200000,
@@ -1029,7 +1029,7 @@
           }
         },
         "nemotron-3-nano-30b": {
-          "name": "NVIDIA Nemotron 3 Nano 30B A3B | INPUT $0.05/1M | OUTPUT $0.2/1M",
+          "name": "NVIDIA Nemotron 3 Nano 30B A3B | OUTPUT $0.2/1M",
           "modelID": "nvidia/nemotron-3-nano-30b-a3b",
           "limit": {
             "context": 262144,
@@ -1050,7 +1050,7 @@
           }
         },
         "gpt-oss-120b": {
-          "name": "OpenAI GPT OSS 120B | INPUT $0.05/1M | OUTPUT $0.25/1M",
+          "name": "OpenAI GPT OSS 120B | OUTPUT $0.25/1M",
           "modelID": "openai/gpt-oss-120b",
           "limit": {
             "context": 131072,
@@ -1072,7 +1072,7 @@
           }
         },
         "glm-5.3-flash": {
-          "name": "GLM 5.3 Flash | INPUT $0.15/1M | OUTPUT $0.5/1M",
+          "name": "GLM 5.3 Flash | OUTPUT $0.5/1M",
           "modelID": "zai-org/glm-5.3-flash",
           "limit": {
             "context": 1048576,
@@ -1095,7 +1095,7 @@
           }
         },
         "qwen-3.8-flash": {
-          "name": "Qwen 3.8 Flash | INPUT $0.15/1M | OUTPUT $0.47/1M",
+          "name": "Qwen 3.8 Flash | OUTPUT $0.47/1M",
           "modelID": "qwen/qwen3.8-flash",
           "limit": {
             "context": 1048576,
@@ -1118,7 +1118,7 @@
           }
         },
         "step-3.7-flash": {
-          "name": "Step 3.7 Flash | INPUT $0.2/1M | OUTPUT $1.15/1M",
+          "name": "Step 3.7 Flash | OUTPUT $1.15/1M",
           "modelID": "stepfun/step-3.7-flash",
           "limit": {
             "context": 262144,
@@ -1141,7 +1141,7 @@
           }
         },
         "deepseek-v4.1-flash": {
-          "name": "DeepSeek V4.1 Flash | INPUT $0.3/1M | OUTPUT $1.2/1M",
+          "name": "DeepSeek V4.1 Flash | OUTPUT $1.2/1M",
           "modelID": "deepseek/deepseek-v4.1-flash",
           "limit": {
             "context": 1048576,
@@ -1163,7 +1163,7 @@
           }
         },
         "deepseek-v4.1-flash-1017": {
-          "name": "DeepSeek V4.1 Flash 1017 | INPUT $0.3/1M | OUTPUT $1.2/1M",
+          "name": "DeepSeek V4.1 Flash 1017 | OUTPUT $1.2/1M",
           "modelID": "deepseek/deepseek-v4.1-flash-1017",
           "limit": {
             "context": 1048576,
@@ -1185,7 +1185,7 @@
           }
         },
         "kimi-k2.6": {
-          "name": "Kimi K2.6 | INPUT $0.8/1M | OUTPUT $3.4/1M",
+          "name": "Kimi K2.6 | OUTPUT $3.4/1M",
           "modelID": "moonshotai/kimi-k2.6",
           "limit": {
             "context": 262144,
@@ -1208,7 +1208,7 @@
           }
         },
         "kimi-k2.7-code": {
-          "name": "Kimi K2.7 Code | INPUT $0.95/1M | OUTPUT $4/1M",
+          "name": "Kimi K2.7 Code | OUTPUT $4/1M",
           "modelID": "moonshotai/kimi-k2.7-code",
           "limit": {
             "context": 262144,
@@ -1231,7 +1231,7 @@
           }
         },
         "deepseek-v4-pro-0813": {
-          "name": "DeepSeek V4 Pro 0813 | INPUT $1.32/1M | OUTPUT $3.96/1M",
+          "name": "DeepSeek V4 Pro 0813 | OUTPUT $3.96/1M",
           "modelID": "deepseek/deepseek-v4-pro-0813",
           "limit": {
             "context": 1048576,
@@ -1252,7 +1252,7 @@
           }
         },
         "deepseek-v4-pro": {
-          "name": "DeepSeek V4 Pro | INPUT $1.6/1M | OUTPUT $3.2/1M",
+          "name": "DeepSeek V4 Pro | OUTPUT $3.2/1M",
           "modelID": "deepseek/deepseek-v4-pro",
           "limit": {
             "context": 1048576,
@@ -1273,7 +1273,7 @@
           }
         },
         "mimo-v2.6-flash": {
-          "name": "MiMo V2.6 Flash | INPUT $0.14/1M | OUTPUT $0.28/1M",
+          "name": "MiMo V2.6 Flash | OUTPUT $0.28/1M",
           "modelID": "xiaomimimo/mimo-v2.6-flash",
           "limit": {
             "context": 1048576,
@@ -1297,7 +1297,7 @@
           }
         },
         "mimo-v2.6-pro": {
-          "name": "MiMo V2.6 Pro | INPUT $0.435/1M | OUTPUT $0.87/1M",
+          "name": "MiMo V2.6 Pro | OUTPUT $0.87/1M",
           "modelID": "xiaomimimo/mimo-v2.6-pro",
           "limit": {
             "context": 1048576,
@@ -1321,7 +1321,7 @@
           }
         },
         "glm-5.3": {
-          "name": "GLM 5.3 | INPUT $1.4/1M | OUTPUT $4.4/1M",
+          "name": "GLM 5.3 | OUTPUT $4.4/1M",
           "modelID": "zai-org/glm-5.3",
           "limit": {
             "context": 1048576,
@@ -1342,7 +1342,7 @@
           }
         },
         "kimi-k3": {
-          "name": "Kimi K3 | INPUT $3/1M | OUTPUT $15/1M",
+          "name": "Kimi K3 | OUTPUT $15/1M",
           "modelID": "moonshotai/kimi-k3",
           "limit": {
             "context": 1048576,
@@ -1363,7 +1363,7 @@
           }
         },
         "deepseek-v4-flash-0731": {
-          "name": "DeepSeek V4 Flash 0731 | INPUT $0.44/1M | OUTPUT $1.32/1M",
+          "name": "DeepSeek V4 Flash 0731 | OUTPUT $1.32/1M",
           "modelID": "deepseek/deepseek-v4-flash-0731",
           "limit": {
             "context": 1048576,
@@ -1384,7 +1384,7 @@
           }
         },
         "macaron-v1-venti": {
-          "name": "Macaron V1 Venti | INPUT $0.825/1M | OUTPUT $2.475/1M",
+          "name": "Macaron V1 Venti | OUTPUT $2.475/1M",
           "modelID": "macaron/macaron-v1-venti",
           "limit": {
             "context": 1048576,
@@ -1405,7 +1405,7 @@
           }
         },
         "qwen3.7-max": {
-          "name": "Qwen3.7 Max | INPUT $1.25/1M | OUTPUT $3.75/1M",
+          "name": "Qwen3.7 Max | OUTPUT $3.75/1M",
           "modelID": "qwen/qwen3.7-max",
           "limit": {
             "context": 1000000,
@@ -1426,7 +1426,7 @@
           }
         },
         "qwen3.6-27b": {
-          "name": "Qwen3.6 27B | INPUT $0.6/1M | OUTPUT $3.6/1M",
+          "name": "Qwen3.6 27B | OUTPUT $3.6/1M",
           "modelID": "qwen/qwen3.6-27b",
           "limit": {
             "context": 262144,
@@ -1447,7 +1447,7 @@
           }
         },
         "gemma-4-26b-a4b": {
-          "name": "Gemma 4 26B A4B | INPUT $0.13/1M | OUTPUT $0.4/1M",
+          "name": "Gemma 4 26B A4B | OUTPUT $0.4/1M",
           "modelID": "google/gemma-4-26b-a4b",
           "limit": {
             "context": 262144,
@@ -1468,7 +1468,7 @@
           }
         },
         "gemma-4-31b": {
-          "name": "Gemma 4 31B | INPUT $0.14/1M | OUTPUT $0.4/1M",
+          "name": "Gemma 4 31B | OUTPUT $0.4/1M",
           "modelID": "google/gemma-4-31b",
           "limit": {
             "context": 262144,
@@ -1489,7 +1489,7 @@
           }
         },
         "qwen3.5-27b": {
-          "name": "Qwen3.5 27B | INPUT $0.3/1M | OUTPUT $2.4/1M",
+          "name": "Qwen3.5 27B | OUTPUT $2.4/1M",
           "modelID": "qwen/qwen3.5-27b",
           "limit": {
             "context": 262144,
@@ -1510,7 +1510,7 @@
           }
         },
         "qwen3.5-122b-a10b": {
-          "name": "Qwen3.5 122B A10B | INPUT $0.4/1M | OUTPUT $3.2/1M",
+          "name": "Qwen3.5 122B A10B | OUTPUT $3.2/1M",
           "modelID": "qwen/qwen3.5-122b-a10b",
           "limit": {
             "context": 262144,
@@ -1531,7 +1531,7 @@
           }
         },
         "qwen3.5-35b-a3b": {
-          "name": "Qwen3.5 35B A3B | INPUT $0.25/1M | OUTPUT $2/1M",
+          "name": "Qwen3.5 35B A3B | OUTPUT $2/1M",
           "modelID": "qwen/qwen3.5-35b-a3b",
           "limit": {
             "context": 262144,
@@ -1552,7 +1552,7 @@
           }
         },
         "qwen3.5-397b-a17b": {
-          "name": "Qwen3.5 397B A17B | INPUT $0.6/1M | OUTPUT $3.6/1M",
+          "name": "Qwen3.5 397B A17B | OUTPUT $3.6/1M",
           "modelID": "qwen/qwen3.5-397b-a17b",
           "limit": {
             "context": 262144,
@@ -1573,7 +1573,7 @@
           }
         },
         "glm-5": {
-          "name": "GLM 5 | INPUT $1/1M | OUTPUT $3.2/1M",
+          "name": "GLM 5 | OUTPUT $3.2/1M",
           "modelID": "zai-org/glm-5",
           "limit": {
             "context": 207872,
@@ -1594,7 +1594,7 @@
           }
         },
         "glm-4.6": {
-          "name": "GLM 4.6 | INPUT $0.55/1M | OUTPUT $2.2/1M",
+          "name": "GLM 4.6 | OUTPUT $2.2/1M",
           "modelID": "zai-org/glm-4.6",
           "limit": {
             "context": 209920,
@@ -1615,7 +1615,7 @@
           }
         },
         "qwen3.6-35b-a3b": {
-          "name": "Qwen3.6 35B A3B | INPUT $0.248/1M | OUTPUT $1.485/1M",
+          "name": "Qwen3.6 35B A3B | OUTPUT $1.485/1M",
           "modelID": "qwen/qwen3.6-35b-a3b",
           "limit": {
             "context": 262144,
@@ -1636,7 +1636,7 @@
           }
         },
         "kimi-k2-instruct-0905": {
-          "name": "Kimi K2 Instruct 0905 | INPUT $0.6/1M | OUTPUT $2.5/1M",
+          "name": "Kimi K2 Instruct 0905 | OUTPUT $2.5/1M",
           "modelID": "moonshotai/kimi-k2-instruct-0905",
           "limit": {
             "context": 262144,
@@ -1657,7 +1657,7 @@
           }
         },
         "kimi-k2-instruct": {
-          "name": "Kimi K2 Instruct | INPUT $0.57/1M | OUTPUT $2.3/1M",
+          "name": "Kimi K2 Instruct | OUTPUT $2.3/1M",
           "modelID": "moonshotai/kimi-k2-instruct",
           "limit": {
             "context": 128000,
@@ -1678,7 +1678,7 @@
           }
         },
         "llama-3.1-8b-instruct": {
-          "name": "Llama 3.1 8B Instruct | INPUT $0.02/1M | OUTPUT $0.05/1M",
+          "name": "Llama 3.1 8B Instruct | OUTPUT $0.05/1M",
           "modelID": "meta-llama/llama-3.1-8b-instruct",
           "limit": {
             "context": 16000,
@@ -1699,7 +1699,7 @@
           }
         },
         "llama-3.3-70b-instruct": {
-          "name": "Llama 3.3 70B Instruct | INPUT $0.135/1M | OUTPUT $0.4/1M",
+          "name": "Llama 3.3 70B Instruct | OUTPUT $0.4/1M",
           "modelID": "meta-llama/llama-3.3-70b-instruct",
           "limit": {
             "context": 12000,
@@ -1720,7 +1720,7 @@
           }
         },
         "gemma-3-27b": {
-          "name": "Gemma 3 27B | INPUT $0.119/1M | OUTPUT $0.2/1M",
+          "name": "Gemma 3 27B | OUTPUT $0.2/1M",
           "modelID": "google/gemma-3-27b",
           "limit": {
             "context": 98304,
@@ -1741,7 +1741,7 @@
           }
         },
         "deepseek-r1-turbo": {
-          "name": "DeepSeek R1 Turbo | INPUT $0.7/1M | OUTPUT $2.5/1M",
+          "name": "DeepSeek R1 Turbo | OUTPUT $2.5/1M",
           "modelID": "deepseek/deepseek-r1-turbo",
           "limit": {
             "context": 63000,
@@ -1762,7 +1762,7 @@
           }
         },
         "llama-3-8b-stheno-v3.2": {
-          "name": "Llama 3 8B Stheno V3.2 | INPUT $0.05/1M | OUTPUT $0.05/1M",
+          "name": "Llama 3 8B Stheno V3.2 | OUTPUT $0.05/1M",
           "modelID": "meta-llama/llama-3-8b-stheno-v3.2",
           "limit": {
             "context": 8000,
@@ -1783,7 +1783,7 @@
           }
         },
         "ling-3.0-flash-vl": {
-          "name": "Ling 3.0 Flash VL | INPUT $0.075/1M | OUTPUT $0.22/1M",
+          "name": "Ling 3.0 Flash VL | OUTPUT $0.22/1M",
           "modelID": "inclusionAI/ling-3.0-flash-vl",
           "limit": {
             "context": 262144,
@@ -1805,7 +1805,7 @@
           }
         },
         "ling-3.0-flash-sante": {
-          "name": "Ling 3.0 Flash Sante | INPUT $0.075/1M | OUTPUT $0.22/1M",
+          "name": "Ling 3.0 Flash Sante | OUTPUT $0.22/1M",
           "modelID": "inclusionAI/ling-3.0-flash-sante",
           "limit": {
             "context": 262144,
@@ -1826,7 +1826,7 @@
           }
         },
         "glm-4.5-air": {
-          "name": "GLM 4.5 Air | INPUT $0.13/1M | OUTPUT $0.85/1M",
+          "name": "GLM 4.5 Air | OUTPUT $0.85/1M",
           "modelID": "zai-org/glm-4.5-air",
           "limit": {
             "context": 131072,
@@ -1847,7 +1847,7 @@
           }
         },
         "deepseek-ocr-2": {
-          "name": "DeepSeek OCR 2 | INPUT $0.03/1M | OUTPUT $0.03/1M",
+          "name": "DeepSeek OCR 2 | OUTPUT $0.03/1M",
           "modelID": "deepseek/deepseek-ocr-2",
           "limit": {
             "context": 8192,
@@ -1869,7 +1869,7 @@
           }
         },
         "deepseek-r1-0528": {
-          "name": "DeepSeek R1 0528 | INPUT $0.7/1M | OUTPUT $2.5/1M",
+          "name": "DeepSeek R1 0528 | OUTPUT $2.5/1M",
           "modelID": "deepseek/deepseek-r1-0528",
           "limit": {
             "context": 167936,
@@ -1890,7 +1890,7 @@
           }
         },
         "llama-4-scout-instruct": {
-          "name": "Llama 4 Scout Instruct | INPUT $0.18/1M | OUTPUT $0.59/1M",
+          "name": "Llama 4 Scout Instruct | OUTPUT $0.59/1M",
           "modelID": "meta-llama/llama-4-scout-17b-16e-instruct",
           "limit": {
             "context": 131072,
@@ -1912,7 +1912,7 @@
           }
         },
         "qwen3-vl-plus": {
-          "name": "Qwen3 VL Plus | TIERED INPUT $0.144–0.431/1M | OUTPUT $1.434–4.301/1M (cost fields use lowest tier)",
+          "name": "Qwen3 VL Plus | OUTPUT $1.434–4.301/1M (cost fields use lowest tier)",
           "modelID": "qwen/qwen3-vl-plus",
           "limit": {
             "context": 262144,
@@ -1935,7 +1935,7 @@
           }
         },
         "qwen4-max": {
-          "name": "Qwen4 Max | INPUT $1.413/1M | OUTPUT $4.24/1M",
+          "name": "Qwen4 Max | OUTPUT $4.24/1M",
           "modelID": "qwen/qwen4-max",
           "limit": {
             "context": 1048576,
@@ -1958,7 +1958,7 @@
           }
         },
         "qwen3.8-27b": {
-          "name": "Qwen3.8 27B | INPUT $0.42/1M | OUTPUT $3/1M",
+          "name": "Qwen3.8 27B | OUTPUT $3/1M",
           "modelID": "qwen/qwen3.8-27b",
           "limit": {
             "context": 1048576,
@@ -1979,7 +1979,7 @@
           }
         },
         "qwen3.8-2.4t-a95b": {
-          "name": "Qwen3.8 2.4T A95B | INPUT $2/1M | OUTPUT $6/1M",
+          "name": "Qwen3.8 2.4T A95B | OUTPUT $6/1M",
           "modelID": "qwen/qwen3.8-2.4t-a95b",
           "limit": {
             "context": 1048576,
@@ -2000,7 +2000,7 @@
           }
         },
         "qwen3.8-max": {
-          "name": "Qwen3.8 Max | INPUT $2/1M | OUTPUT $6/1M",
+          "name": "Qwen3.8 Max | OUTPUT $6/1M",
           "modelID": "qwen/qwen3.8-max",
           "limit": {
             "context": 1048576,
@@ -2023,7 +2023,7 @@
           }
         },
         "qwen3-vl-30b-a3b-instruct": {
-          "name": "Qwen3 VL 30B A3B Instruct | INPUT $0.2/1M | OUTPUT $0.7/1M",
+          "name": "Qwen3 VL 30B A3B Instruct | OUTPUT $0.7/1M",
           "modelID": "qwen/qwen3-vl-30b-a3b-instruct",
           "limit": {
             "context": 131072,
@@ -2046,7 +2046,7 @@
           }
         },
         "qwen3-omni-30b-a3b-thinking": {
-          "name": "Qwen3 Omni 30B A3B Thinking | INPUT $0.25/1M | OUTPUT $0.97/1M",
+          "name": "Qwen3 Omni 30B A3B Thinking | OUTPUT $0.97/1M",
           "modelID": "qwen/qwen3-omni-30b-a3b-thinking",
           "limit": {
             "context": 67584,
@@ -2070,7 +2070,7 @@
           }
         },
         "qwen-mt-plus": {
-          "name": "Qwen MT Plus | INPUT $0.25/1M | OUTPUT $0.75/1M",
+          "name": "Qwen MT Plus | OUTPUT $0.75/1M",
           "modelID": "qwen/qwen-mt-plus",
           "limit": {
             "context": 16384,
@@ -2091,7 +2091,7 @@
           }
         },
         "glm-5.3-flashx": {
-          "name": "GLM 5.3 FlashX | INPUT $0.37/1M | OUTPUT $1.25/1M",
+          "name": "GLM 5.3 FlashX | OUTPUT $1.25/1M",
           "modelID": "zai-org/glm-5.3-flashX",
           "limit": {
             "context": 1048576,
@@ -2114,7 +2114,7 @@
           }
         },
         "glm-5.2": {
-          "name": "GLM 5.2 | INPUT $1.4/1M | OUTPUT $4.4/1M",
+          "name": "GLM 5.2 | OUTPUT $4.4/1M",
           "modelID": "zai-org/glm-5.2",
           "limit": {
             "context": 1048576,
@@ -2135,7 +2135,7 @@
           }
         },
         "glm-5.1": {
-          "name": "GLM 5.1 | INPUT $1.38/1M | OUTPUT $4.4/1M",
+          "name": "GLM 5.1 | OUTPUT $4.4/1M",
           "modelID": "zai-org/glm-5.1",
           "limit": {
             "context": 209920,
@@ -2156,7 +2156,7 @@
           }
         },
         "glm-4.7": {
-          "name": "GLM 4.7 | INPUT $0.6/1M | OUTPUT $2.2/1M",
+          "name": "GLM 4.7 | OUTPUT $2.2/1M",
           "modelID": "zai-org/glm-4.7",
           "limit": {
             "context": 209920,
@@ -2177,7 +2177,7 @@
           }
         },
         "autoglm-phone-9b-multilingual": {
-          "name": "AutoGLM Phone 9B Multilingual | INPUT $0.035/1M | OUTPUT $0.138/1M",
+          "name": "AutoGLM Phone 9B Multilingual | OUTPUT $0.138/1M",
           "modelID": "zai-org/autoglm-phone-9b-multilingual",
           "limit": {
             "context": 67584,
@@ -2199,7 +2199,7 @@
           }
         },
         "glm-4.6v": {
-          "name": "GLM 4.6V | INPUT $0.3/1M | OUTPUT $0.9/1M",
+          "name": "GLM 4.6V | OUTPUT $0.9/1M",
           "modelID": "zai-org/glm-4.6v",
           "limit": {
             "context": 131072,
@@ -2222,7 +2222,7 @@
           }
         },
         "glm-4.5v": {
-          "name": "GLM 4.5V | INPUT $0.6/1M | OUTPUT $1.8/1M",
+          "name": "GLM 4.5V | OUTPUT $1.8/1M",
           "modelID": "zai-org/glm-4.5v",
           "limit": {
             "context": 67584,
@@ -2245,7 +2245,7 @@
           }
         },
         "wizardlm-2-8x22b": {
-          "name": "WizardLM 2 8x22B | INPUT $0.62/1M | OUTPUT $0.62/1M",
+          "name": "WizardLM 2 8x22B | OUTPUT $0.62/1M",
           "modelID": "microsoft/wizardlm-2-8x22b",
           "limit": {
             "context": 67584,
@@ -2266,7 +2266,7 @@
           }
         },
         "ling-3.1-flash": {
-          "name": "Ling 3.1 Flash 1019 | INPUT $0.3/1M | OUTPUT $0.9/1M",
+          "name": "Ling 3.1 Flash 1019 | OUTPUT $0.9/1M",
           "modelID": "inclusionai/ling-3.1-flash",
           "limit": {
             "context": 1048576,
@@ -2287,7 +2287,7 @@
           }
         },
         "ling-3.0-flash-fin": {
-          "name": "Ling 3.0 Flash Fin | INPUT $0.075/1M | OUTPUT $0.22/1M",
+          "name": "Ling 3.0 Flash Fin | OUTPUT $0.22/1M",
           "modelID": "inclusionai/ling-3.0-flash-fin",
           "limit": {
             "context": 262144,
@@ -2308,7 +2308,7 @@
           }
         },
         "ling-3.0-flash": {
-          "name": "Ling 3.0 Flash | INPUT $0.06/1M | OUTPUT $0.18/1M",
+          "name": "Ling 3.0 Flash | OUTPUT $0.18/1M",
           "modelID": "inclusionai/ling-3.0-flash",
           "limit": {
             "context": 262144,
@@ -2329,7 +2329,7 @@
           }
         },
         "macaron-v1-tall": {
-          "name": "Macaron V1 Tall | INPUT $0.2475/1M | OUTPUT $1.43/1M",
+          "name": "Macaron V1 Tall | OUTPUT $1.43/1M",
           "modelID": "mindai/macaron-v1-tall",
           "limit": {
             "context": 262144,
@@ -2350,7 +2350,7 @@
           }
         },
         "kimi-k3.1-pro-highspeed": {
-          "name": "Kimi K3.1 Pro Highspeed | INPUT $4/1M | OUTPUT $20/1M",
+          "name": "Kimi K3.1 Pro Highspeed | OUTPUT $20/1M",
           "modelID": "moonshotai/kimi-k3.1-pro-highspeed",
           "limit": {
             "context": 1048576,
@@ -2373,7 +2373,7 @@
           }
         },
         "kimi-k3.1-pro": {
-          "name": "Kimi K3.1 Pro | INPUT $2/1M | OUTPUT $10/1M",
+          "name": "Kimi K3.1 Pro | OUTPUT $10/1M",
           "modelID": "moonshotai/kimi-k3.1-pro",
           "limit": {
             "context": 1048576,
@@ -2396,7 +2396,7 @@
           }
         },
         "kimi-k2.5": {
-          "name": "Kimi K2.5 | INPUT $0.6/1M | OUTPUT $3/1M",
+          "name": "Kimi K2.5 | OUTPUT $3/1M",
           "modelID": "moonshotai/kimi-k2.5",
           "limit": {
             "context": 262144,
@@ -2419,7 +2419,7 @@
           }
         },
         "kimi-k2-thinking": {
-          "name": "Kimi K2 Thinking | INPUT $0.6/1M | OUTPUT $2.5/1M",
+          "name": "Kimi K2 Thinking | OUTPUT $2.5/1M",
           "modelID": "moonshotai/kimi-k2-thinking",
           "limit": {
             "context": 262144,
@@ -2440,7 +2440,7 @@
           }
         },
         "hy4-flash": {
-          "name": "Hy4 Flash | PROMO INPUT $0.035/1M (regular $0.07) | PROMO OUTPUT $0.1405/1M (regular $0.281)",
+          "name": "Hy4 Flash | PROMO OUTPUT $0.1405/1M (regular $0.281)",
           "modelID": "tencent/hy4-flash",
           "limit": {
             "context": 1048576,
@@ -2463,7 +2463,7 @@
           }
         },
         "hy4": {
-          "name": "Hy4 | PROMO INPUT $0.417/1M (regular $0.834) | PROMO OUTPUT $1.2505/1M (regular $2.501)",
+          "name": "Hy4 | PROMO OUTPUT $1.2505/1M (regular $2.501)",
           "modelID": "tencent/hy4",
           "limit": {
             "context": 1048576,
@@ -2486,7 +2486,7 @@
           }
         },
         "hy4-preview": {
-          "name": "Hy4 Preview | INPUT $0.834/1M | OUTPUT $2.501/1M",
+          "name": "Hy4 Preview | OUTPUT $2.501/1M",
           "modelID": "tencent/hy4-preview",
           "limit": {
             "context": 1048576,
@@ -2507,7 +2507,7 @@
           }
         },
         "hy3": {
-          "name": "Hy3 | INPUT $0.14/1M | OUTPUT $0.58/1M",
+          "name": "Hy3 | OUTPUT $0.58/1M",
           "modelID": "tencent/hy3",
           "limit": {
             "context": 262144,
@@ -2528,7 +2528,7 @@
           }
         },
         "step-5-preview": {
-          "name": "Step 5 Preview | INPUT $1/1M | OUTPUT $2.7/1M",
+          "name": "Step 5 Preview | OUTPUT $2.7/1M",
           "modelID": "stepfun/step-5-preview",
           "limit": {
             "context": 1048576,
@@ -2566,7 +2566,7 @@
       },
       "models": {
         "gpt-oss-20b-darkbloom-fp4": {
-          "name": "OpenAI GPT-OSS 20B | INPUT $0.017/1M | OUTPUT $0.085/1M | Darkbloom FP4",
+          "name": "OpenAI GPT-OSS 20B | OUTPUT $0.085/1M | Darkbloom FP4",
           "modelID": "openai/gpt-oss-20b",
           "limit": {
             "context": 131072,
@@ -2598,7 +2598,7 @@
           }
         },
         "ling-3-0-flash-antdigital-fp8": {
-          "name": "InclusionAI Ling 3.0 Flash | INPUT $0.021/1M | OUTPUT $0.063/1M | AntDigital FP8",
+          "name": "InclusionAI Ling 3.0 Flash | OUTPUT $0.063/1M | AntDigital FP8",
           "modelID": "inclusionai/ling-3.0-flash",
           "limit": {
             "context": 262144,
@@ -2629,29 +2629,8 @@
             }
           }
         },
-        "glm-5-3-flash-batch": {
-          "name": "Z.ai GLM 5.3 Flash (BATCH) | INPUT $0.023/1M | OUTPUT $0.068/1M",
-          "modelID": "z-ai/glm-5.3-flash:batch",
-          "limit": {
-            "context": 1048576,
-            "output": 131072
-          },
-          "capabilities": {
-            "tools": true,
-            "input": [
-              "text"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "cost": {
-            "input": 0.023,
-            "output": 0.068
-          }
-        },
         "qwen-3-7-flash": {
-          "name": "Alibaba Qwen 3.7 Flash | INPUT $0.03/1M | OUTPUT $0.13/1M",
+          "name": "Alibaba Qwen 3.7 Flash | OUTPUT $0.13/1M",
           "modelID": "qwen/qwen3.7-flash",
           "limit": {
             "context": 1000000,
@@ -2679,7 +2658,7 @@
           }
         },
         "tencent-hy4-flash": {
-          "name": "Tencent Hy4 Flash | INPUT $0.035/1M | OUTPUT $0.1405/1M",
+          "name": "Tencent Hy4 Flash | OUTPUT $0.1405/1M",
           "modelID": "tencent/hy4-flash",
           "limit": {
             "context": 1048576,
@@ -2698,33 +2677,6 @@
           "cost": {
             "input": 0.035,
             "output": 0.1405
-          },
-          "options": {
-            "reasoning": {
-              "enabled": true
-            }
-          }
-        },
-        "deepseek-v4-1-flash-batch": {
-          "name": "DeepSeek V4.1 Flash (BATCH) | INPUT $0.05/1M | OUTPUT $0.15/1M",
-          "modelID": "deepseek/deepseek-v4.1-flash:batch",
-          "limit": {
-            "context": 1048576,
-            "output": 384000
-          },
-          "capabilities": {
-            "tools": true,
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "cost": {
-            "input": 0.05,
-            "output": 0.15
           },
           "options": {
             "reasoning": {
